@@ -15,23 +15,26 @@ How to Execute:
 #include <fstream>
 
 void ShowBadChannels(){
-  CreateList("histo_Electron_Reco.root","log","auto","electron", "TH1");
+  CreateList();
 }
 
 
 void CreateList(){
 
- std::ofstream outstring("ListOfHistograms.txt");
+ std::ofstream outstring("ListOfBadChannels.txt");
 
  outstring << "" << std::endl;
- outstring << "<< List of bad CASTOR channels >>" << std::endl;
+ outstring << "<< List of CASTOR channels >>" << std::endl;
  outstring << " " << std::endl;
+ outstring << "It shows number of times that a channel was active." << std::endl;
+ outstring << "0 = Bad Channel" << std::endl;
+ outstring << "" << std::endl;
 
  TFile *l1  = TFile::Open("ZeroBiasA.root");
  TH1F* h_1 = (TH1F*)l1->Get("diffractiveZAnalysisTTreeAfter/CastorChannelWorking");
-    
-    for (j=1; j<=h_1->GetNbinsX(); j++){
-            outstring << "Channel: " << j << h_1->GetBinContent(j) << endl;
+
+    for (int j=2; j<=225; j++){
+            outstring << "Channel(" << j-1 << "): "<< h_1->GetBinContent(j) << endl;
     }
     
  outstring.close();
