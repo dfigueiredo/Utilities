@@ -20,7 +20,7 @@ void CastorPlotter(){
 
   //RunAll
   //MakeMultipleSingle("muon");
-  ThresholdsStudies("histo_Castor_threshold_p2_unpaired.root","unpaired",0,1);
+  ThresholdsStudies("histo_Castor_threshold_p1_unpaired.root","unpaired",0,1);
 
 }
 
@@ -218,7 +218,7 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
     TH1F* h_1 = (TH1F*)l1->Get(finalname);
     c1->cd(i);
     h_1->Fit("gaus");
-    h_1->GetXaxis()->SetRangeUser(0.,5*h_1->GetFunction("gaus")->GetParameter(2));
+    h_1->GetXaxis()->SetRangeUser(-5*h_1->GetFunction("gaus")->GetParameter(2),5*h_1->GetFunction("gaus")->GetParameter(2));
     h_1->GetYaxis()->SetRangeUser(0.,1.3*h_1->GetFunction("gaus")->GetMaximum());
     h_1->Draw();
 
@@ -264,6 +264,7 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
   gr->GetXaxis()->SetTitle("Sector");
   gr->SetMarkerSize(1.2);
   gr->SetMarkerStyle(21);
+  gr->GetYaxis()->SetRangeUser(0.,8.);
   gr->Draw("AP");
     
   outstring.close();
