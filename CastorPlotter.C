@@ -239,7 +239,7 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
     y[i-1] = 4*h_1->GetFunction("gaus")->GetParameter(2);
     x[i-1] = i;
     ex[i-1] = 0;
-    ey[i-1] = h_1->GetFunction("gaus")->GetParError(2);
+    ey[i-1] = 2*h_1->GetFunction("gaus")->GetParError(2);
       
     TLatex *lt = new TLatex(0.7,160,text);
     sprintf(text,"f(x) = %g*e^{#frac{x-%g}{%g}}",h_1->GetFunction("gaus")->GetParameter(1),h_1->GetFunction("gaus")->GetParameter(2),h_1->GetFunction("gaus")->GetParameter(3));
