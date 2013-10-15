@@ -15,11 +15,12 @@ No defense for empyt histograms or files. Private use.
 #include <iostream>
 #include <fstream>
 
+
 void CastorPlotter(){
 
   //RunAll
   //MakeMultipleSingle("muon");
-  ThresholdsStudies("histo_Castor_threshold_p2_unpaired.root","unpaired");
+  ThresholdsStudies("histo_Castor_threshold_p2_unpaired.root","unpaired",0,1);
 
 }
 
@@ -187,10 +188,14 @@ void MakeMultipleSingle(TString type){
 //
 // Output: file with each sector threshold.
 
-void ThresholdsStudies(TString openfile, TString complement){
-
-  TCanvas *c1 = new TCanvas("multiple1","multiple1",2000,1000);
+void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool printTh){
+    
+  gStyle->SetOptStat("em");
+    
+  TCanvas *c1 = new TCanvas("sectorenergy","sectorenergy",2000,1000);
   c1->Divide(4,4);
+    
+  TCanvas *c2 = new TCanvas("thresholds","thresholds",500,500);
 
   TFile *l1  = TFile::Open(openfile);
 
@@ -198,31 +203,69 @@ void ThresholdsStudies(TString openfile, TString complement){
   outtxt.ReplaceAll("root","txt");
   TString newname = "FitResults_"+outtxt;
   std::ofstream outstring(newname);
+  Double_t x[16], y[16];
+  Double_t ex[16], ey[16];
 
   for (int i=1; i< 17; i++){
+      
     char name[300];
+    char text[300];
+    char textth[300];
+      
     sprintf(name,"Sector%d_CastorSumEnergy_with_type_",i);
     TString finalname = name + complement;
     cout << finalname << endl;
     TH1F* h_1 = (TH1F*)l1->Get(finalname);
     c1->cd(i);
     h_1->Fit("gaus");
+    h_1->GetXaxis()->SetRangeUser(0.,5*h_1->GetFunction("gaus")->GetParameter(2));
+    h_1->GetYaxis()->SetRangeUser(0.,1.3*h_1->GetFunction("gaus")->GetMaximum());
     h_1->Draw();
 
     double limit = 4*h_1->GetFunction("gaus")->GetParameter(2);
     Double_t maxvalue = 0.9*h_1->GetMaximum();
 
-    TLine *line = new TLine(limit,0,limit,maxvalue);
+    TLine *line = new TLine(limit,0,limit,0.7*maxvalue);
     line->SetLineColor(8);
     line->SetLineWidth(3);
-
     line->Draw();
+      
     outstring << "\n<< Sector " << i << " >>" << endl;
     outstring << "Mean: " << h_1->GetFunction("gaus")->GetParameter(1)<< " GeV" << endl;
     outstring << "Sigma: " << h_1->GetFunction("gaus")->GetParameter(2)<< " GeV" << endl;
     outstring << "Threshold (4xsigma): " << 4*h_1->GetFunction("gaus")->GetParameter(2)<< " GeV" << endl;
-  }
+    outstring << "Error Threshold (4xsigma): " << h_1->GetFunction("gaus")->GetParError(2) << " GeV" << endl;
 
+    y[i-1] = 4*h_1->GetFunction("gaus")->GetParameter(2);
+    x[i-1] = i;
+    ex[i-1] = 0;
+    ey[i-1] = h_1->GetFunction("gaus")->GetParError(2);
+      
+    TLatex *lt = new TLatex(0.7,160,text);
+    sprintf(text,"f(x) = %g*e^{#frac{x-%g}{%g}}",h_1->GetFunction("gaus")->GetParameter(1),h_1->GetFunction("gaus")->GetParameter(2),h_1->GetFunction("gaus")->GetParameter(3));
+    lt->SetTextSize(0.1);
+    lt->SetTextFont(72);
+    lt->SetTextColor(kBlue);
+    if (printPar) lt->DrawLatex(2.,1.,text);
+      
+    TLatex *ltt = new TLatex(0.7,160,text);
+    sprintf(textth,"Threshold: %g GeV",4*h_1->GetFunction("gaus")->GetParameter(2));
+    ltt->SetTextSize(0.08);
+    ltt->SetTextFont(72);
+    ltt->SetTextColor(kBlack);
+    if (printTh) ltt->DrawLatex(0.15,1.1*h_1->GetFunction("gaus")->GetMaximum(),textth);
+      
+  }
+    
+  c2->cd();
+  gr = new TGraphErrors(16,x,y,ex,ey);
+  gr->SetTitle("Castor Threshold per Sector");
+  gr->GetYaxis()->SetTitle("Threshold [GeV]");
+  gr->GetXaxis()->SetTitle("Sector");
+  gr->SetMarkerSize(1.2);
+  gr->SetMarkerStyle(21);
+  gr->Draw("AP");
+    
   outstring.close();
 
 }
