@@ -18,9 +18,8 @@ No defense for empyt histograms or files. Private use.
 
 void CastorPlotter(){
 
-  //RunAll
-  //MakeMultipleSingle("muon");
-  ThresholdsStudiesChannels("histo_Castor_threshold_p1_unpaired.root","unpaired",0,1);
+  MakeMultipleSingle("muon");
+  //ThresholdsStudiesChannels("histo_Castor_threshold_p1_unpaired.root","unpaired",0,1);
   //ThresholdsStudiesSectors("histo_Castor_threshold_p2_unpaired.root","unpaired",0,1);
   //ThresholdsStudiesSectors("histo_Castor_threshold_p3_unpaired.root","unpaired",0,1);
 
@@ -144,8 +143,7 @@ void MakeMultipleSingle(TString type){
   TCanvas *c3 = new TCanvas("multiple3","multiple3",2000,1000);
   c3->Divide(4,4);
 
-  TCanvas *c4 = new TCanvas("multiple4","multiple4",2000,250);
-  c4->Divide(5,1);
+  TCanvas *c4 = new TCanvas("multiple4","multiple4",500,500);
 
   TCanvas *c5 = new TCanvas("multiple5","multiple5",2000,250);
   c5->Divide(5,1);
@@ -155,6 +153,7 @@ void MakeMultipleSingle(TString type){
   TCanvas *c7 = new TCanvas("multiple7","multiple7",2000,1000);
   c7->Divide(4,4);
 
+  TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
 
   if (type == "muon" || type == "Muon" || type == "MUON"){
     TFile *l1  = TFile::Open("histo_Castor_muon.root");
@@ -217,9 +216,22 @@ void MakeMultipleSingle(TString type){
     char name4[300];
     sprintf(name4,"CastorMultiplicityModule%d_step7",i);
     TH1F* h_1d = (TH1F*)l1->Get(name4);
-    c4->cd(i);
+    c4->cd();
     h_1d->GetYaxis()->SetTitleOffset(1.4);
-    h_1d->Draw();
+      h_1d->SetMarkerColor(i);
+      h_1->SetMarkerSize(1.5);
+      h_1d->SetMarkerStyle(8);
+      h_1d->GetYaxis()->SetRangeUser(0.,470.);
+      h_1d->SetTitle("Multiplicity");
+      char legtitle[300];
+      sprintf(legtitle,"Module %d",i);
+      leg->AddEntry(h_1d,legtitle,"p");
+    if (i==1) {
+       h_1d->Draw("p");
+    }else{
+       h_1d->Draw("psame");
+    }
+    leg->Draw();
 
     char name5[300];
     sprintf(name5,"CastorMultiplicityModule%dVsTotal_step7",i);

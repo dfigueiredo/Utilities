@@ -31,23 +31,28 @@ GapHFMinusAndCastorZKinPositive
 #include <fstream>
 
 void DiffractiveZPlotter(){
-  SectorPhi("CastorCentroidPhi_single_step7");
+
   //PlotterFour("muon");
   //RunAll("histo_Electron_Reco.root","log","auto","electron", "TH1");
-  //MakePlot("patDiElectronMass_single_step7","patDiElectronMass_single_step7","nolog","auto","electron",0,"TH1"); //always 0!
+  //MakePlot("Tracks_single_GapHFMinusAndCastor","Tracks_single_GapHFMinusAndCastor","nolog","auto","electron",0,"TH1"); //always 0!
   //MakePlot("CastorMultiplicityAfter_single_step7","CastorMultiplicity_single_step7","nolog","auto","muon",0,"TH1"); //always 0!
   //MakePlot("CastorMultiplicityBefore_single_step7","CastorMultiplicity_single_step7","nolog","auto","muon",0,"TH1"); //always 0!
   //MakePlot("SectorVsTotalCastorEnergyAfter_single_step7","SectorVsTotalCastorEnergy_single_step7","nolog","auto","muon",0,"TH2"); //always 0!
 
   //MakePlot("SectorVsTotalCastorEnergy_single_step7","SectorVsTotalCastorEnergy_single_step7","nolog","auto","muon",0,"TH1"); //always 0!
 
-  //MakeMultiple("muon");
+
   //PlotCalorimeter("muon");
-  //PlotterDivide("muon","RunNumberHighCastorBefore_single_step7","RunNumber_singleBefore_single_step7");
   //PlotterDivide("muon","RunNumberHighCastorAfter_single_step7","RunNumber_singleAfter_single_step7");
- 
+
+  MakeAllKinematics("step7");
+  MakeAllKinematics("GapHFMinus");
+
 }
 
+//
+// RunAll: to create a list file with all *.root objects
+//
 void RunAll(TString filename, TString logOpt, TString autonorma, TString type, TString th){
 
   std::ofstream outstring("ListOfHistograms.txt");
@@ -55,7 +60,7 @@ void RunAll(TString filename, TString logOpt, TString autonorma, TString type, T
   gStyle->SetOptStat(0);
   TFile *f1= new TFile(filename);
 
-  TList* tdf_obs = f1->GetListOfKeys(); 
+  TList* tdf_obs = f1->GetListOfKeys();
   char *hName1 = new char [80];
   char *filesave = new char[80];
 
@@ -82,7 +87,7 @@ void RunAll(TString filename, TString logOpt, TString autonorma, TString type, T
     if (obj->IsA()->InheritsFrom("TDirectory")) {
       TDirectory *d = static_cast<TDirectory*>(obj);
       cout << "Dir: " << d->GetPath() << endl;
-    } 
+    }
 
     if (h->GetEntries() != 0){ // Defense
       if(obj->IsA()->InheritsFrom("TH1")){
@@ -98,6 +103,163 @@ void RunAll(TString filename, TString logOpt, TString autonorma, TString type, T
 }
 
 
+//
+// MakeAllKinematics: create kinematics plots for Z for a given cut
+//
+void MakeAllKinematics(TString complement){
+
+  gStyle->SetOptStat("em");
+
+  TLegend* leg_electron = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
+  TLegend* leg_muon = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
+  TString legdata, legmc1_e, legmc2_e, legmc1_m, legmc2_m;
+
+  TCanvas *c1 = new TCanvas(complement,complement,2000,1200);
+  c1->Divide(4,2);
+
+  TFile *l1e  = TFile::Open("histo_Electron_Reco.root");
+  TFile *l2e  = TFile::Open("histo_DyToEE_Reco.root");
+  TFile *l3e  = TFile::Open("histo_Pompyt_electron_Reco.root");
+
+  TFile *l1m  = TFile::Open("histo_Muon_Reco.root");
+  TFile *l2m  = TFile::Open("histo_DyToMuMu_Reco.root");
+  TFile *l3m  = TFile::Open("histo_Pompyt_muon_Reco.root");
+
+  legdata = "2010 data";
+  legmc1_e = "Pythia6, DY to e^{+}e^{-}";
+  legmc2_e = "Pompyt, Z to e^{+}e^{-}";
+  legmc1_m = "Pythia6, DY to #mu^{+}#mu^{-}";
+  legmc2_m = "Pompyt, Z to #mu^{+}#mu^{-}";
+
+  TString name_e1 = "DiElectronMass_single_" + complement;
+  TString name_e2 = "DiElectronEta_single_" + complement;
+  TString name_e3 = "DiElectronPhi_single_" + complement;
+  TString name_e4 = "DiElectronPt_single_" + complement;
+
+  vector<TString> histoname_e;
+  histoname_e.push_back(name_e1);
+  histoname_e.push_back(name_e2);
+  histoname_e.push_back(name_e3);
+  histoname_e.push_back(name_e4);
+
+  for (unsigned i=0; i<histoname_e.size(); i++){
+
+    double weight1_e = 0.;
+    double weight2_e = 0.;
+    double weight3_e = 0.;
+    double ratio1_e = 0.;
+    double ratio2_e = 0.;
+
+    cout << histoname_e[i] << endl;
+    TH1F* h_1e = (TH1F*)l1e->Get(histoname_e.at(i));
+    TH1F* h_2e = (TH1F*)l2e->Get(histoname_e.at(i));
+    TH1F* h_3e = (TH1F*)l3e->Get(histoname_e.at(i));
+
+    weight1_e = 1./h_1e->GetEntries();
+    weight2_e = 1./h_2e->GetEntries();
+    weight3_e = 1./h_3e->GetEntries();
+
+    ratio1_e = weight2_e/weight1_e;
+    ratio2_e = weight3_e/weight1_e;
+
+    h_1e->SetLineColor(kBlack);
+    h_1e->SetMarkerStyle(20);
+    h_1e->SetMarkerSize(0.8);
+    h_1e->GetYaxis()->SetTitle("N Events");
+    if(i==0)leg_electron->AddEntry(h_1e,legdata,"p");
+
+    h_2e->SetLineColor(kRed);
+    h_2e->SetLineWidth(2);
+    h_2e->Scale(ratio1_e);
+    h_2e->SetFillColor(kRed-4);
+    h_2e->SetFillStyle(3020);
+    h_2e->GetYaxis()->SetTitle("N Events");
+    if(i==0)leg_electron->AddEntry(h_2e,legmc1_e,"LFP");
+
+    h_3e->SetLineColor(kBlue);
+    h_3e->SetLineWidth(2);
+    h_3e->Scale(ratio2_e);
+    h_3e->SetFillColor(kBlue-4);
+    h_3e->SetFillStyle(3020);
+    h_3e->GetYaxis()->SetTitle("N Events");
+    if(i==0)leg_electron->AddEntry(h_3e,legmc2_e,"LFP");
+
+    c1->cd(i+1);
+    h_1e->Draw("ep");
+    h_2e->Draw("histosame");
+    h_3e->Draw("histosame");
+
+    leg_electron->Draw("histosames");
+
+  }
+
+  TString name_m1 = "DiMuonMass_single_" + complement;
+  TString name_m2 = "DiMuonEta_single_" + complement;
+  TString name_m3 = "DiMuonPhi_single_" + complement;
+  TString name_m4 = "DiMuonPt_single_" + complement;
+
+  vector<TString> histoname_m;
+  histoname_m.push_back(name_m1);
+  histoname_m.push_back(name_m2);
+  histoname_m.push_back(name_m3);
+  histoname_m.push_back(name_m4);
+
+  for (unsigned i=0; i<histoname_m.size(); i++){
+
+    double weight1_m = 0.;
+    double weight2_m = 0.;
+    double weight3_m = 0.;
+    double ratio1_m = 0.;
+    double ratio2_m = 0.;
+
+    cout << histoname_m[i] << endl;
+    TH1F* h_1m = (TH1F*)l1m->Get(histoname_m[i]);
+    TH1F* h_2m = (TH1F*)l2m->Get(histoname_m[i]);
+    TH1F* h_3m = (TH1F*)l3m->Get(histoname_m[i]);
+
+    weight1_m = 1./h_1m->GetEntries();
+    weight2_m = 1./h_2m->GetEntries();
+    weight3_m = 1./h_3m->GetEntries();
+
+    ratio1_m = weight2_m/weight1_m;
+    ratio2_m = weight3_m/weight1_m;
+
+    h_1m->SetLineColor(kBlack);
+    h_1m->SetMarkerStyle(20);
+    h_1m->SetMarkerSize(0.8);
+    h_1m->GetYaxis()->SetTitle("N Events");
+    if(i==0)leg_muon->AddEntry(h_1m,legdata,"p");
+
+    h_2m->SetLineColor(kRed);
+    h_2m->SetLineWidth(2);
+    h_2m->Scale(ratio1_m);
+    h_2m->SetFillColor(kRed-4);
+    h_2m->SetFillStyle(3020);
+    h_2m->GetYaxis()->SetTitle("N Events");
+    if(i==0)leg_muon->AddEntry(h_2m,legmc1_m,"LFP");
+
+    h_3m->SetLineColor(kBlue);
+    h_3m->SetLineWidth(2);
+    h_3m->Scale(ratio2_m);
+    h_3m->SetFillColor(kBlue-4);
+    h_3m->SetFillStyle(3020);
+    h_3m->GetYaxis()->SetTitle("N Events");
+    if(i==0)leg_muon->AddEntry(h_3m,legmc2_m,"LFP");
+
+    c1->cd(i+5);
+    h_1m->Draw("ep");
+    h_2m->Draw("histosame");
+    h_3m->Draw("histosame");
+
+    leg_muon->Draw("histosames");
+
+  }
+
+}
+
+//
+// Make a single plot with Fit
+//
 void MakePlot(TString name1,TString name2, TString logscale, TString AutoNorma, TString type, bool destructor, TString th){
 
   TCanvas *c1 = new TCanvas(name1,name1);
@@ -110,7 +272,6 @@ void MakePlot(TString name1,TString name2, TString logscale, TString AutoNorma, 
   TString legdata, legmc1, legmc2;
 
   if (type == "muon" || type == "Muon" || type == "MUON"){
-    //TFile *l1  = TFile::Open("histo_Muon_Reco.root");
     TFile *l1  = TFile::Open("histo_Muon_Reco.root");
     TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
     TFile *l3  = TFile::Open("histo_Pompyt_muon_Reco.root");
@@ -207,169 +368,9 @@ void MakePlot(TString name1,TString name2, TString logscale, TString AutoNorma, 
 
 }
 
-void SectorPhi(TString name1){
-
-  TCanvas *c1 = new TCanvas(name1,name1);
-  c1->cd();   
-
-  gStyle->SetOptStat(0);
-
-  TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
-  TString legdata, legmc;
-
-  TFile *l1  = TFile::Open("histo_Muon_Reco.root");
-  TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
-  legdata = "2010 data";
-  legmc = "MC";
-
-  TH1F* h_1 = (TH1F*)l1->Get(name1);
-  TH1F* h_2 = (TH1F*)l2->Get(name1);
- 
-  double weight1, weight2;
-
-  weight1 = 1./h_1->GetEntries();
-  weight2 = 1./h_2->GetEntries();
-
-  h_1->SetLineColor(kBlack);
-  h_1->SetMarkerStyle(20);
-  h_1->SetMarkerSize(0.8);
-  h_1->Scale(weight1);
-  h_1->GetYaxis()->SetTitle("Density");
-  leg->AddEntry(h_1,legdata,"p");
-
-  h_2->SetLineColor(kRed);
-  h_2->SetLineWidth(2);
-  h_2->Scale(weight2);
-  h_2->SetFillColor(kRed-4);
-  h_2->SetFillStyle(3020);
-  h_2->GetYaxis()->SetTitle("Density");
-  leg->AddEntry(h_2,legmc,"LFP");
-
-  h_1->Draw("histo");
-  h_2->Draw("histosame");
-  leg->Draw();
-
-}
-^
-
-void MakeMultiple(TString type){
-
-  gStyle->SetOptStat(0);
-
-  TCanvas *c1 = new TCanvas("multiple1","multiple1",2000,1000);
-  c1->Divide(4,4);
-
-  TCanvas *c2 = new TCanvas("multiple2","multiple2",2000,1000);
-  c2->Divide(4,4);
-
-  TCanvas *c3 = new TCanvas("multiple3","multiple3",2000,1000);
-  c3->Divide(4,4);
-
-  if (type == "muon" || type == "Muon" || type == "MUON"){
-    TFile *l1  = TFile::Open("histo_Muon_Reco.root");
-    TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
-    TFile *l3  = TFile::Open("histo_Pompyt_muon_Reco.root");
-  }
-  else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
-    TFile *l1  = TFile::Open("histo_Electron_Reco.root");
-    TFile *l2  = TFile::Open("histo_DyToEE_Reco.root");
-    TFile *l3  = TFile::Open("histo_Pompyt_electron_Reco.root");
-  }
-  else {
-    std::cout << "Please, put correct option." << std::endl;
-    exit(0);
-  }
-
-
-  for (int i=1; i< 17; i++){
-    char name[300];
-    sprintf(name,"TotalEnergyCastor_sector%d_single_step7",i);
-    TH1F* h_1 = (TH1F*)l1->Get(name);
-    TH1F* h_2 = (TH1F*)l2->Get(name);
-    TH1F* h_3 = (TH1F*)l3->Get(name);
-    TH1F* h_4 = h_1->Clone();
-    h_4->Reset();
-    h_4->SetMaximum(1.);
-    TH1Draw(h_1,h_2,h_3);
-    c1->cd(i);
-    gPad->SetLogx(1);
-    gPad->SetLogy(1);
-    h_4->Draw();
-    h_1->DrawNormalized("same");
-    h_2->DrawNormalized("same");
-    //h_3->DrawNormalized("same");
-
-  }
-
-
-  for (int i=1; i< 17; i++){
-    char name[300];
-    char name2[300];
-    sprintf(name,"TotalEnergyCastor_Before_sector%d_single_step7",i);
-    sprintf(name2,"TotalEnergyCastor_sector%d_single_step7",i);
-    TH1F* h_1b = (TH1F*)l1->Get(name);
-    TH1F* h_2b = (TH1F*)l2->Get(name2);
-    TH1F* h_3b = (TH1F*)l3->Get(name2);
-    TH1F* h_4b = h_1b->Clone();
-    h_4b->Reset();
-    TH1Draw(h_1b,h_2b,h_3b);
-    c2->cd(i);
-    gPad->SetLogx(1);
-    gPad->SetLogy(1);
-    h_4b->Draw();
-    h_4b->SetMaximum(1.);
-    h_1b->DrawNormalized("same");
-    h_2b->DrawNormalized("same");
-    //h_3b->DrawNormalized("same");
-
-  }
-
-
-  for (int i=1; i< 17; i++){
-    char name[300];
-    char name2[300];
-    sprintf(name,"TotalEnergyCastor_After_sector%d_single_step7",i);
-    sprintf(name2,"TotalEnergyCastor_sector%d_single_step7",i);
-    TH1F* h_1a = (TH1F*)l1->Get(name);
-    TH1F* h_2a = (TH1F*)l2->Get(name2);
-    TH1F* h_3a = (TH1F*)l3->Get(name2);
-    TH1F* h_4a = h_1a->Clone();
-    h_4a->Reset();
-    TH1Draw(h_1a,h_2a,h_3a);
-    c3->cd(i);
-    gPad->SetLogx(1);
-    gPad->SetLogy(1);
-    h_4a->SetMaximum(1.);
-    h_4a->Draw();
-    h_1a->DrawNormalized("same");
-    h_2a->DrawNormalized("same");
-    //h_3a->DrawNormalized("same");
-  }
-
-
-}
-
-void TH1Draw(TH1F* h_1, TH1F* h_2, TH1F* h_3){
-
-  h_1->SetLineColor(kBlack);
-  h_1->SetMarkerStyle(20);
-  h_1->SetMarkerSize(0.8);
-  h_1->GetYaxis()->SetTitle("N Events");
-
-  h_2->SetLineColor(kRed);
-  h_2->SetLineWidth(2);
-  h_2->SetFillColor(kRed-4);
-  h_2->SetFillStyle(3020);
-  h_2->GetYaxis()->SetTitle("N Events");
-
-  h_3->SetLineColor(kBlue);
-  h_3->SetLineWidth(2);
-  h_3->SetFillColor(kBlue-4);
-  h_3->SetFillStyle(3020);
-  h_3->GetYaxis()->SetTitle("N Events");
-
-}
-
+//
+// Plot all calorimeter information
+//
 void PlotCalorimeter(TString type){
 
 
@@ -430,6 +431,9 @@ void PlotCalorimeter(TString type){
 
 }
 
+//
+// Plot distribution for each vertex
+//
 void PlotterFour(TString type){
 
   gStyle->SetOptStat(0);
@@ -455,12 +459,14 @@ void PlotterFour(TString type){
   TH1D* h_2 = (TH1D*)l2->Get("CastorMultiplicity_single_step7");
   TH1D* h_3 = (TH1D*)l3->Get("CastorMultiplicity_single_step7");
   TH1D* h_4 = (TH1D*)l4->Get("CastorMultiplicity_single_step7");
-/*
-  h_1->Scale(1./h_1->GetBinContent(16));
-  h_2->Scale(1./h_2->GetBinContent(16));
-  h_3->Scale(1./h_3->GetBinContent(16));
-  h_4->Scale(1./h_4->GetBinContent(16));
-*/
+
+  /*
+     h_1->Scale(1./h_1->GetBinContent(16));
+     h_2->Scale(1./h_2->GetBinContent(16));
+     h_3->Scale(1./h_3->GetBinContent(16));
+     h_4->Scale(1./h_4->GetBinContent(16));
+   */
+
   cout << "Integral H1: " << h_1->Integral(0,16) << endl;
   N2H1DSameArea(h_1,h_3);
   h_3->Scale(1./2.);
@@ -471,19 +477,22 @@ void PlotterFour(TString type){
   //N2HSameMax(h_1,h_3);
   //N2HSameMax(h_1,h_4);
 
-plotHists(h_1,h1_sub,h_3,"Castor Multiplicity","Castor Multiplicity","NEvents","H1","H1_sub","H2",0);
+  plotHists(h_1,h1_sub,h_3,"Castor Multiplicity","Castor Multiplicity","NEvents","H1","H1_sub","H2",0);
   //plotHists(h_1,h_2,h_3,h_4,"Castor Multiplicity","Castor Multiplicity","NEvents","Data, Vertex 1","Data, Vertex 2","Data, Vertex 3","Data, Vertex 4",0);
 
 }
 
+//
+// Compute Fractions of DeltaEta
+//
 void PlotterDivide(TString type,TString name,TString name2){
 
   TCanvas *c1 = new TCanvas("frac","frac",1000,1000);
   c1->Divide(2,2);
-  
+
   gStyle->SetOptStat(0);
 
-   if (type == "muon" || type == "Muon" || type == "MUON"){
+  if (type == "muon" || type == "Muon" || type == "MUON"){
     TFile *l1  = TFile::Open("histo_Muon_Reco.root");
   }
   else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
@@ -507,38 +516,63 @@ void PlotterDivide(TString type,TString name,TString name2){
 
   //gStyle->SetLabelSize(10., "X"); 
 
-   int j;
-   double fraction;
-   for (j=1; j<=h_1->GetNbinsX(); j++){
-   //cout << j << endl;
-   if (h_1->GetBinContent(j) > 0){
-   fraction = h_1->GetBinContent(j)*1./h_1D->GetBinContent(j)*1.;
-   cout << "Bin Content, High: " << h_1->GetBinContent(j) << endl;
-   cout << "Bin Content, Total: " << h_1D->GetBinContent(j) << endl;
-   cout << "Fraction: " << fraction << endl; 
-   h_fraction->Fill(134000+j,fraction);
-   h_fraction1->Fill(fraction);
+  int j;
+  double fraction;
+  for (j=1; j<=h_1->GetNbinsX(); j++){
+    //cout << j << endl;
+    if (h_1->GetBinContent(j) > 0){
+      fraction = h_1->GetBinContent(j)*1./h_1D->GetBinContent(j)*1.;
+      cout << "Bin Content, High: " << h_1->GetBinContent(j) << endl;
+      cout << "Bin Content, Total: " << h_1D->GetBinContent(j) << endl;
+      cout << "Fraction: " << fraction << endl; 
+      h_fraction->Fill(134000+j,fraction);
+      h_fraction1->Fill(fraction);
 
-   if (j > 14900){
-   h_fraction2->Fill(fraction);
-   } else h_fraction3->Fill(fraction);
+      if (j > 14900){
+	h_fraction2->Fill(fraction);
+      } else h_fraction3->Fill(fraction);
 
-   }
-   }
+    }
+  }
 
-   c1->cd(1);
-   h_fraction->Draw();
+  c1->cd(1);
+  h_fraction->Draw();
 
-   c1->cd(2);
-   h_fraction1->Draw();
+  c1->cd(2);
+  h_fraction1->Draw();
 
-   c1->cd(3);
-   h_fraction2->Draw();
+  c1->cd(3);
+  h_fraction2->Draw();
 
-   c1->cd(4);
-   h_fraction3->Draw();
+  c1->cd(4);
+  h_fraction3->Draw();
 
 
 }
+
+//
+// Style
+//
+void TH1Draw(TH1F* h_1, TH1F* h_2, TH1F* h_3){
+
+  h_1->SetLineColor(kBlack);
+  h_1->SetMarkerStyle(20);
+  h_1->SetMarkerSize(0.8);
+  h_1->GetYaxis()->SetTitle("N Events");
+
+  h_2->SetLineColor(kRed);
+  h_2->SetLineWidth(2);
+  h_2->SetFillColor(kRed-4);
+  h_2->SetFillStyle(3020);
+  h_2->GetYaxis()->SetTitle("N Events");
+
+  h_3->SetLineColor(kBlue);
+  h_3->SetLineWidth(2);
+  h_3->SetFillColor(kBlue-4);
+  h_3->SetFillStyle(3020);
+  h_3->GetYaxis()->SetTitle("N Events");
+
+}
+
 
 
