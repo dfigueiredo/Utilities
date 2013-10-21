@@ -199,7 +199,7 @@ void MakeMultipleSingle(TString type){
   for (int i=1; i< 17; i++){
     gStyle->SetPalette(1);
     char name3[300];
-    sprintf(name3,"Channel%d_EnergyVsModule_step7",i);
+    sprintf(name3,"AlongZ_Sector%d_EnergyVsModule_step7",i);
     TH2F* h_1c = (TH2F*)l1->Get(name3);
     TH2F* h_2c = h_1c->Clone();
     h_2c->Reset();
@@ -250,7 +250,7 @@ void MakeMultipleSingle(TString type){
   for (int i=1; i< 17; i++){
     gStyle->SetPalette(1);
     char name6[300];
-    sprintf(name6,"Channel%d_EnergyVsModuleTProf_step7",i);
+    sprintf(name6,"AlongZ_Sector%d_EnergyVsModuleTProf_step7",i);
     TProfile* h_1g = (TProfile*)l1->Get(name6);
     c7->cd(i);
     h_1g->GetYaxis()->SetTitleOffset(1.4);
