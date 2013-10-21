@@ -221,7 +221,7 @@ void MakeMultipleSingle(TString type){
       h_1d->SetMarkerColor(i);
       h_1->SetMarkerSize(1.5);
       h_1d->SetMarkerStyle(8);
-      h_1d->GetYaxis()->SetRangeUser(0.,470.);
+      h_1d->GetYaxis()->SetRangeUser(0.,600.);
       h_1d->SetTitle("Multiplicity");
       char legtitle[300];
       sprintf(legtitle,"Module %d",i);
