@@ -20,9 +20,9 @@ void CastorPlotter(){
 
   //RunAll
   //MakeMultipleSingle("muon");
-  ThresholdsStudies("histo_Castor_threshold_p1_unpaired.root","unpaired",0,1);
-  //ThresholdsStudies("histo_Castor_threshold_p2_unpaired.root","unpaired",0,1);
-  //ThresholdsStudies("histo_Castor_threshold_p3_unpaired.root","unpaired",0,1);
+  ThresholdsStudiesChannels("histo_Castor_threshold_p1_unpaired.root","unpaired",0,1);
+  //ThresholdsStudiesSectors("histo_Castor_threshold_p2_unpaired.root","unpaired",0,1);
+  //ThresholdsStudiesSectors("histo_Castor_threshold_p3_unpaired.root","unpaired",0,1);
 
 }
 
@@ -141,6 +141,20 @@ void MakeMultipleSingle(TString type){
   TCanvas *c2 = new TCanvas("multiple2","multiple2",2000,1000);
   c2->Divide(4,4);
 
+  TCanvas *c3 = new TCanvas("multiple3","multiple3",2000,1000);
+  c3->Divide(4,4);
+
+  TCanvas *c4 = new TCanvas("multiple4","multiple4",2000,250);
+  c4->Divide(5,1);
+
+  TCanvas *c5 = new TCanvas("multiple5","multiple5",2000,250);
+  c5->Divide(5,1);
+
+  TCanvas *c6 = new TCanvas("multiple6","multiple6",500,500);
+
+  TCanvas *c7 = new TCanvas("multiple7","multiple7",2000,1000);
+  c7->Divide(4,4);
+
 
   if (type == "muon" || type == "Muon" || type == "MUON"){
     TFile *l1  = TFile::Open("histo_Castor_muon.root");
@@ -165,9 +179,8 @@ void MakeMultipleSingle(TString type){
     gPad->SetLogx(1);
     gPad->SetLogy(1);
     h_2->Draw();
+    h_1->GetYaxis()->SetTitleOffset(1.4);
     h_1->DrawNormalized("same");
-
-
   }
 
   for (int i=1; i< 17; i++){
@@ -178,22 +191,71 @@ void MakeMultipleSingle(TString type){
     TH2F* h_2b = h_1b->Clone();
     h_2b->Reset();
     c2->cd(i);
-    h_1b->RebinY(50);
+    h_1b->RebinY(3);
     h_2b->Draw("colz");
+    h_1b->GetYaxis()->SetTitleOffset(1.4);
     h_1b->Draw("colzsame");
+  }
+
+  for (int i=1; i< 17; i++){
+    gStyle->SetPalette(1);
+    char name3[300];
+    sprintf(name3,"Channel%d_EnergyVsModule_step7",i);
+    TH2F* h_1c = (TH2F*)l1->Get(name3);
+    TH2F* h_2c = h_1c->Clone();
+    h_2c->Reset();
+    c3->cd(i);
+    h_1c->GetYaxis()->SetRangeUser(0.,400.);
+    h_2c->GetYaxis()->SetRangeUser(0.,400.);
+    h_1c->RebinY(3);
+    h_2c->Draw("colz");
+    h_1c->GetYaxis()->SetTitleOffset(1.4);
+    h_1c->Draw("colzsame");
+  }
+
+  for (int i=1; i< 6; i++){
+    char name4[300];
+    sprintf(name4,"CastorMultiplicityModule%d_step7",i);
+    TH1F* h_1d = (TH1F*)l1->Get(name4);
+    c4->cd(i);
+    h_1d->GetYaxis()->SetTitleOffset(1.4);
+    h_1d->Draw();
+
+    char name5[300];
+    sprintf(name5,"CastorMultiplicityModule%dVsTotal_step7",i);
+    TH2F* h_1e = (TH2F*)l1->Get(name5);
+    c5->cd(i);
+    gStyle->SetPalette(1);
+    h_1e->GetYaxis()->SetTitleOffset(1.4);
+    h_1e->Draw("colz");
+  }
+
+  TH1F* h_1f = (TH1F*)l1->Get("CastorMultiplicity_step7");
+  c6->cd();
+  h_1f->GetYaxis()->SetTitleOffset(1.4);
+  h_1f->Draw();
+
+  for (int i=1; i< 17; i++){
+    gStyle->SetPalette(1);
+    char name6[300];
+    sprintf(name6,"Channel%d_EnergyVsModuleTProf_step7",i);
+    TProfile* h_1g = (TProfile*)l1->Get(name6);
+    c7->cd(i);
+    h_1g->GetYaxis()->SetTitleOffset(1.4);
+    h_1g->Draw();
   }
 
 }
 
 //
-// Castor: thresholds. Thresholds Measurements.
+// Castor: sector thresholds. Thresholds Measurements.
 //
 // Output: file with each sector threshold.
 
-void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool printTh){
-    
+void ThresholdsStudiesSectors(TString openfile, TString complement, bool printPar, bool printTh){
+
   gStyle->SetOptStat("em");
-    
+
   TCanvas *c1 = new TCanvas("sectorenergy","sectorenergy",2000,1000);
   c1->Divide(4,4);
   TCanvas *c2 = new TCanvas("thresholds","thresholds",500,500);
@@ -211,12 +273,12 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
   Double_t eys[16];
 
   for (int i=1; i< 17; i++){
-      
+
     char name[300];
     char text[300];
     char textth[300];
     char textthf[300];     
- 
+
     sprintf(name,"Sector%d_CastorSumEnergy_with_type_",i);
     TString finalname = name + complement;
     cout << finalname << endl;
@@ -225,6 +287,7 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
     h_1->Fit("gaus","","",-5.,5.);
     h_1->GetXaxis()->SetRangeUser(-5*h_1->GetFunction("gaus")->GetParameter(2),5*h_1->GetFunction("gaus")->GetParameter(2));
     h_1->GetYaxis()->SetRangeUser(0.,1.3*h_1->GetFunction("gaus")->GetMaximum());
+    h_1->GetYaxis()->SetTitleOffset(1.4);
     h_1->Draw();
 
     double limit = 4*h_1->GetFunction("gaus")->GetParameter(2);
@@ -234,7 +297,7 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
     line->SetLineColor(8);
     line->SetLineWidth(3);
     line->Draw();
-      
+
     outstring << "\n<< Sector " << i << " >>" << endl;
     outstring << "Mean: " << h_1->GetFunction("gaus")->GetParameter(1)<< " GeV" << endl;
     outstring << "Sigma: " << h_1->GetFunction("gaus")->GetParameter(2)<< " GeV" << endl;
@@ -245,36 +308,37 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
     x[i-1] = i;
     ex[i-1] = 0;
     ey[i-1] = 4*h_1->GetFunction("gaus")->GetParError(2);
-      
+
     ys[i-1] = h_1->GetFunction("gaus")->GetParameter(2);
     eys[i-1] = h_1->GetFunction("gaus")->GetParError(2);
-      
+
     TLatex *lt = new TLatex(0.7,160,text);
     sprintf(text,"f(x) = %g*e^{#frac{x-%g}{%g}}",h_1->GetFunction("gaus")->GetParameter(1),h_1->GetFunction("gaus")->GetParameter(2),h_1->GetFunction("gaus")->GetParameter(3));
     lt->SetTextSize(0.1);
     lt->SetTextFont(72);
     lt->SetTextColor(kBlue);
     if (printPar) lt->DrawLatex(2.,1.,text);
-      
+
     TLatex *ltt = new TLatex(0.7,160,textth);
     sprintf(textth,"Threshold: %g GeV",4*h_1->GetFunction("gaus")->GetParameter(2));
     ltt->SetTextSize(0.08);
     ltt->SetTextFont(72);
     ltt->SetTextColor(kBlack);
     if (printTh) ltt->DrawLatex(-3*h_1->GetFunction("gaus")->GetParameter(2),1.1*h_1->GetFunction("gaus")->GetMaximum(),textth);
-   
+
   }
-    
+
   c2->cd();
   gr = new TGraphErrors(16,x,y,ex,ey);
   gr->SetTitle("Castor Threshold per Sector");
   gr->GetYaxis()->SetTitle("Threshold [GeV]");
   gr->GetXaxis()->SetTitle("Sector");
   gr->SetMarkerSize(1.);
+  gr->GetYaxis()->SetTitleOffset(1.4);
   gr->SetMarkerStyle(21);
   gr->GetYaxis()->SetRangeUser(0.,1.5*y[0]);
   gr->Draw("AP");
-    
+
   c3->cd();
   grs = new TGraphErrors(16,x,ys,ex,eys);
   grs->SetTitle("#sigma_{fit} per Sector");
@@ -282,6 +346,7 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
   grs->GetXaxis()->SetTitle("Sector");
   grs->SetMarkerSize(1.);
   grs->SetMarkerStyle(21);
+  grs->GetYaxis()->SetTitleOffset(1.4);
   grs->GetYaxis()->SetRangeUser(0.,1.5*ys[0]);
   grs->Fit("pol0");
   grs->Draw("AP");
@@ -292,9 +357,141 @@ void ThresholdsStudies(TString openfile, TString complement, bool printPar, bool
   lttf->SetTextFont(72);
   lttf->SetTextColor(kBlack);
   lttf->DrawLatex(1,1.35*ys[0],textthf);
-    
+
   outstring.close();
 
+}
+
+//
+// Castor: channels thresholds. Thresholds Measurements.
+//
+// Output: file with each channel threshold.
+
+void ThresholdsStudiesChannels(TString openfile, TString complement, bool printPar, bool printTh){
+    
+    gStyle->SetOptStat("em");
+    
+    TCanvas *c1 = new TCanvas("channelenergy1","channelenergy1",2000,1000);
+    c1->Divide(4,4);
+   
+    TCanvas *c2 = new TCanvas("channelenergy2","channelenergy2",2000,1000);
+    c2->Divide(4,4);
+    
+    TCanvas *c3 = new TCanvas("channelenergy3","channelenergy3",2000,1000);
+    c3->Divide(4,4);
+    
+    TCanvas *c4 = new TCanvas("channelenergy4","channelenergy4",2000,1000);
+    c4->Divide(4,4);
+    
+    TCanvas *c5 = new TCanvas("channelenergy5","channelenergy5",2000,1000);
+    c5->Divide(4,4);
+    
+    TCanvas *c6 = new TCanvas("thresholds","thresholds",500,500);
+    TCanvas *c7 = new TCanvas("sigma","sigma",500,500);
+    
+    TFile *l1  = TFile::Open(openfile);
+    
+    TString outtxt = openfile;
+    outtxt.ReplaceAll("root","txt");
+    TString newname = "FitResults_"+outtxt;
+    std::ofstream outstring(newname);
+    Double_t x[80], y[80];
+    Double_t ex[80], ey[80];
+    Double_t ys[80];
+    Double_t eys[80];
+    
+    for (int i=1; i< 81; i++){
+        
+        char name[300];
+        char text[300];
+        char textth[300];
+        char textthf[300];
+        
+        sprintf(name,"Channel%d_Energy_with_type_",i);
+        TString finalname = name + complement;
+        cout << finalname << endl;
+        TH1F* h_1 = (TH1F*)l1->Get(finalname);
+        if (i>=1 && i<=16) c1->cd(i);
+        if (i>=17 && i<=32) c2->cd(i-16);
+        if (i>=33 && i<=48) c3->cd(i-32);
+        if (i>=49 && i<=64) c4->cd(i-48);
+        if (i>=65 && i<=80) c5->cd(i-64);
+        h_1->Fit("gaus","","",-5.,5.);
+        h_1->GetXaxis()->SetRangeUser(-5*h_1->GetFunction("gaus")->GetParameter(2),5*h_1->GetFunction("gaus")->GetParameter(2));
+        h_1->GetYaxis()->SetRangeUser(0.,1.3*h_1->GetFunction("gaus")->GetMaximum());
+        h_1->GetYaxis()->SetTitleOffset(1.4);
+        h_1->Draw();
+        
+        double limit = 4*h_1->GetFunction("gaus")->GetParameter(2);
+        Double_t maxvalue = 0.9*h_1->GetMaximum();
+        
+        TLine *line = new TLine(limit,0,limit,0.7*maxvalue);
+        line->SetLineColor(8);
+        line->SetLineWidth(3);
+        line->Draw();
+        
+        outstring << "\n<< Sector " << i << " >>" << endl;
+        outstring << "Mean: " << h_1->GetFunction("gaus")->GetParameter(1)<< " GeV" << endl;
+        outstring << "Sigma: " << h_1->GetFunction("gaus")->GetParameter(2)<< " GeV" << endl;
+        outstring << "Threshold (4xsigma): " << 4*h_1->GetFunction("gaus")->GetParameter(2)<< " GeV" << endl;
+        outstring << "Error Threshold (4xsigma): " << h_1->GetFunction("gaus")->GetParError(2) << " GeV" << endl;
+        
+        y[i-1] = 4*h_1->GetFunction("gaus")->GetParameter(2);
+        x[i-1] = i;
+        ex[i-1] = 0;
+        ey[i-1] = 4*h_1->GetFunction("gaus")->GetParError(2);
+        
+        ys[i-1] = h_1->GetFunction("gaus")->GetParameter(2);
+        eys[i-1] = h_1->GetFunction("gaus")->GetParError(2);
+        
+        TLatex *lt = new TLatex(0.7,160,text);
+        sprintf(text,"f(x) = %g*e^{#frac{x-%g}{%g}}",h_1->GetFunction("gaus")->GetParameter(1),h_1->GetFunction("gaus")->GetParameter(2),h_1->GetFunction("gaus")->GetParameter(3));
+        lt->SetTextSize(0.1);
+        lt->SetTextFont(72);
+        lt->SetTextColor(kBlue);
+        if (printPar) lt->DrawLatex(2.,1.,text);
+        
+        TLatex *ltt = new TLatex(0.7,160,textth);
+        sprintf(textth,"Threshold: %g GeV",4*h_1->GetFunction("gaus")->GetParameter(2));
+        ltt->SetTextSize(0.08);
+        ltt->SetTextFont(72);
+        ltt->SetTextColor(kBlack);
+        if (printTh) ltt->DrawLatex(-3*h_1->GetFunction("gaus")->GetParameter(2),1.1*h_1->GetFunction("gaus")->GetMaximum(),textth);
+        
+    }
+    
+    c6->cd();
+    gr = new TGraphErrors(80,x,y,ex,ey);
+    gr->SetTitle("Castor Threshold per Sector");
+    gr->GetYaxis()->SetTitle("Threshold [GeV]");
+    gr->GetXaxis()->SetTitle("Sector");
+    gr->SetMarkerSize(1.);
+    gr->GetYaxis()->SetTitleOffset(1.4);
+    gr->SetMarkerStyle(21);
+    gr->GetYaxis()->SetRangeUser(0.,1.5*y[0]);
+    gr->Draw("AP");
+    
+    c7->cd();
+    grs = new TGraphErrors(80,x,ys,ex,eys);
+    grs->SetTitle("#sigma_{fit} per Sector");
+    grs->GetYaxis()->SetTitle("#sigma_{fit} [GeV]");
+    grs->GetXaxis()->SetTitle("Sector");
+    grs->SetMarkerSize(1.);
+    grs->SetMarkerStyle(21);
+    grs->GetYaxis()->SetTitleOffset(1.4);
+    grs->GetYaxis()->SetRangeUser(0.,1.5*ys[0]);
+    grs->Fit("pol0");
+    grs->Draw("AP");
+    
+    TLatex *lttf = new TLatex(0.7,160,textthf);
+    sprintf(textthf,"#sigma_{fit}: %g GeV, Threshold: %g GeV",grs->GetFunction("pol0")->GetParameter(0),4*grs->GetFunction("pol0")->GetParameter(0));
+    lttf->SetTextSize(0.03);
+    lttf->SetTextFont(72);
+    lttf->SetTextColor(kBlack);
+    lttf->DrawLatex(1,1.35*ys[0],textthf);
+    
+    outstring.close();
+    
 }
 
 //
