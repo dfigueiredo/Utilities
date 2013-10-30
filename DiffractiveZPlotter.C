@@ -34,7 +34,7 @@ void DiffractiveZPlotter(){
 
   //PlotterFour("muon");
   //RunAll("histo_Electron_Reco.root","log","auto","electron", "TH1");
-  //MakePlot("Tracks_single_GapHFMinusAndCastor","Tracks_single_GapHFMinusAndCastor","nolog","auto","electron",0,"TH1"); //always 0!
+  //MakePlot("xiPF_single_step7","xiPF_single_step7","log","auto","muon",0,"TH1"); //always 0!
   //MakePlot("CastorMultiplicityAfter_single_step7","CastorMultiplicity_single_step7","nolog","auto","muon",0,"TH1"); //always 0!
   //MakePlot("CastorMultiplicityBefore_single_step7","CastorMultiplicity_single_step7","nolog","auto","muon",0,"TH1"); //always 0!
   //MakePlot("SectorVsTotalCastorEnergyAfter_single_step7","SectorVsTotalCastorEnergy_single_step7","nolog","auto","muon",0,"TH2"); //always 0!
@@ -45,8 +45,14 @@ void DiffractiveZPlotter(){
   //PlotCalorimeter("muon");
   //PlotterDivide("muon","RunNumberHighCastorAfter_single_step7","RunNumber_singleAfter_single_step7");
 
-  MakeAllKinematics("step7");
-  MakeAllKinematics("GapHFMinus");
+  //MakeAllKinematics("step7");
+  //MakeAllKinematics("GapHFMinus");
+  //MakeAllKinematics("GapHFMinusAndCastor");
+  //MakeAllKinematics("GapHFMinusAndCastorZKinPositive");
+  //MakeXiAll("muon");
+  MakeXi("xiPF_single_step7","xiPF_single_step7","log","auto","muon",0,"TH1",0.05); //always 0!
+  MakeXi("xiPF_single_GapHFMinus","xiPF_single_step7","log","auto","muon",0,"TH1",0.05); //always 0!
+  MakeXi("xiPF_single_GapHFMinusAndCastor","xiPF_single_step7","log","auto","muon",0,"TH1",0.05); //always 0!
 
 }
 
@@ -142,25 +148,29 @@ void MakeAllKinematics(TString complement){
   histoname_e.push_back(name_e3);
   histoname_e.push_back(name_e4);
 
+  double weight1_e = 0.;
+  double weight2_e = 0.;
+  double weight3_e = 0.;
+  double ratio1_e = 0.;
+  double ratio2_e = 0.;
+    
+  TH1F* h_1ew = (TH1F*)l1e->Get("DiElectronMass_single_step7");
+  TH1F* h_2ew = (TH1F*)l2e->Get("DiElectronMass_single_step7");
+  TH1F* h_3ew = (TH1F*)l3e->Get("DiElectronMass_single_step7");
+    
+  weight1_e = 1./h_1ew->GetEntries();
+  weight2_e = 1./h_2ew->GetEntries();
+  weight3_e = 1./h_3ew->GetEntries();
+    
+  ratio1_e = weight2_e/weight1_e;
+  ratio2_e = weight3_e/weight1_e;
+    
   for (unsigned i=0; i<histoname_e.size(); i++){
-
-    double weight1_e = 0.;
-    double weight2_e = 0.;
-    double weight3_e = 0.;
-    double ratio1_e = 0.;
-    double ratio2_e = 0.;
 
     cout << histoname_e[i] << endl;
     TH1F* h_1e = (TH1F*)l1e->Get(histoname_e.at(i));
     TH1F* h_2e = (TH1F*)l2e->Get(histoname_e.at(i));
     TH1F* h_3e = (TH1F*)l3e->Get(histoname_e.at(i));
-
-    weight1_e = 1./h_1e->GetEntries();
-    weight2_e = 1./h_2e->GetEntries();
-    weight3_e = 1./h_3e->GetEntries();
-
-    ratio1_e = weight2_e/weight1_e;
-    ratio2_e = weight3_e/weight1_e;
 
     h_1e->SetLineColor(kBlack);
     h_1e->SetMarkerStyle(20);
@@ -178,7 +188,7 @@ void MakeAllKinematics(TString complement){
 
     h_3e->SetLineColor(kBlue);
     h_3e->SetLineWidth(2);
-    h_3e->Scale(ratio2_e);
+    h_3e->Scale(0.05*ratio2_e);
     h_3e->SetFillColor(kBlue-4);
     h_3e->SetFillStyle(3020);
     h_3e->GetYaxis()->SetTitle("N Events");
@@ -203,26 +213,30 @@ void MakeAllKinematics(TString complement){
   histoname_m.push_back(name_m2);
   histoname_m.push_back(name_m3);
   histoname_m.push_back(name_m4);
+    
+  double weight1_m = 0.;
+  double weight2_m = 0.;
+  double weight3_m = 0.;
+  double ratio1_m = 0.;
+  double ratio2_m = 0.;
+    
+  TH1F* h_1mw = (TH1F*)l1e->Get("DiMuonMass_single_step7");
+  TH1F* h_2mw = (TH1F*)l2e->Get("DiMuonMass_single_step7");
+  TH1F* h_3mw = (TH1F*)l3e->Get("DiMuonMass_single_step7");
+    
+  weight1_m = 1./h_1mw->GetEntries();
+  weight2_m = 1./h_2mw->GetEntries();
+  weight3_m = 1./h_3mw->GetEntries();
+    
+  ratio1_m = weight2_m/weight1_m;
+  ratio2_m = weight3_m/weight1_m;
 
   for (unsigned i=0; i<histoname_m.size(); i++){
-
-    double weight1_m = 0.;
-    double weight2_m = 0.;
-    double weight3_m = 0.;
-    double ratio1_m = 0.;
-    double ratio2_m = 0.;
 
     cout << histoname_m[i] << endl;
     TH1F* h_1m = (TH1F*)l1m->Get(histoname_m[i]);
     TH1F* h_2m = (TH1F*)l2m->Get(histoname_m[i]);
     TH1F* h_3m = (TH1F*)l3m->Get(histoname_m[i]);
-
-    weight1_m = 1./h_1m->GetEntries();
-    weight2_m = 1./h_2m->GetEntries();
-    weight3_m = 1./h_3m->GetEntries();
-
-    ratio1_m = weight2_m/weight1_m;
-    ratio2_m = weight3_m/weight1_m;
 
     h_1m->SetLineColor(kBlack);
     h_1m->SetMarkerStyle(20);
@@ -240,7 +254,7 @@ void MakeAllKinematics(TString complement){
 
     h_3m->SetLineColor(kBlue);
     h_3m->SetLineWidth(2);
-    h_3m->Scale(ratio2_m);
+    h_3m->Scale(0.05*ratio2_m);
     h_3m->SetFillColor(kBlue-4);
     h_3m->SetFillStyle(3020);
     h_3m->GetYaxis()->SetTitle("N Events");
@@ -254,7 +268,308 @@ void MakeAllKinematics(TString complement){
     leg_muon->Draw("histosames");
 
   }
+    
+}
 
+//
+// Make a single plot with Fit
+//
+void MakeXi(TString name1,TString name2, TString logscale, TString AutoNorma, TString type, bool destructor, TString th, double per){
+    
+    TCanvas *c1 = new TCanvas(name1,name1);
+    c1->Divide(1,2);
+    c1->cd(1);
+    
+    //gStyle->SetOptStat(0);
+    
+    TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
+    TString legdata, legmc1, legmc2;
+    
+    if (type == "muon" || type == "Muon" || type == "MUON"){
+        TFile *l1  = TFile::Open("histo_Muon_Reco.root");
+        TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
+        TFile *l3  = TFile::Open("histo_Pompyt_muon_Reco.root");
+        legdata = "2010 data";
+        legmc1 = "Pythia6, DY to #mu^{+}#mu^{-}";
+        legmc2 = "Pompyt, Z to #mu^{+}#mu^{-}";
+    }
+    else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
+        TFile *l1  = TFile::Open("histo_Electron_Reco.root");
+        TFile *l2  = TFile::Open("histo_DyToEE_Reco.root");
+        TFile *l3  = TFile::Open("histo_Pompyt_electron_Reco.root");
+        legdata = "2010 data";
+        legmc1 = "Pythia6, DY to e^{+}e^{-}";
+        legmc2 = "Pompyt, Z to e^{+}e^{-}";
+    }
+    else {
+        std::cout << "Please, put correct option." << std::endl;
+        exit(0);
+    }
+    
+    double weight1 = 0.;
+    double weight2 = 0.;
+    double weight3 = 0.;
+    double ratio1 = 0.;
+    double ratio2 = 0.;
+    
+    if(logscale == "log" || logscale == "LOG" || logscale == "Log") {
+       c1->SetLogx(1);
+    }
+    
+    if (th=="TH1"){
+        TH1F* h_1 = (TH1F*)l1->Get(name1);
+        TH1F* h_2 = (TH1F*)l2->Get(name2);
+        TH1F* h_3 = (TH1F*)l3->Get(name2);
+    }
+    else if (th=="TH2"){
+        TH2F* h_1 = (TH2F*)l1->Get(name1);
+        TH2F* h_2 = (TH2F*)l2->Get(name2);
+        TH3F* h_3 = (TH1F*)l3->Get(name2);
+    }
+    
+    TH1F* h_1w = (TH1F*)l1->Get("xiPF_single_step7");
+    TH1F* h_2w = (TH1F*)l2->Get("xiPF_single_step7");
+    TH1F* h_3w = (TH1F*)l3->Get("xiPF_single_step7");
+    
+    if(AutoNorma == "Auto" || AutoNorma == "AUTO" || AutoNorma == "auto") {
+        weight1 = 1./h_1w->GetEntries();
+        weight2 = 1./h_2w->GetEntries();
+        weight3 = 1./h_3w->GetEntries();
+        
+        ratio1 = weight2/weight1;
+        ratio2 = weight3/weight1;
+    }
+    else {
+        weight1 = 1.;
+        weight2 = 1.;
+        weight3 = 1.;
+    }
+    
+    h_1->SetLineColor(kBlack);
+    h_1->SetMarkerStyle(20);
+    h_1->SetMarkerSize(0.8);
+    h_1->GetYaxis()->SetTitle("N Events");
+    leg->AddEntry(h_1,legdata,"p");
+    
+    h_2->SetLineColor(kRed);
+    h_2->SetLineWidth(2);
+    h_2->Scale(ratio1);
+    h_2->SetFillColor(kRed-4);
+    h_2->SetFillStyle(3020);
+    h_2->GetYaxis()->SetTitle("N Events");
+    leg->AddEntry(h_2,legmc1,"LFP");
+    
+    h_3->SetLineColor(kBlue);
+    h_3->SetLineWidth(2);
+    h_3->Scale(per*ratio2);
+    h_3->SetFillColor(kBlue-4);
+    h_3->SetFillStyle(3020);
+    h_3->GetYaxis()->SetTitle("N Events");
+    leg->AddEntry(h_3,legmc2,"LFP");
+    
+    h_1->Draw("ep");
+    h_2->Draw("histosame");
+    h_3->Draw("histosame");
+    leg->Draw("histosames");
+    
+    c1->cd(2);
+    NFitMCToData(h_1,h_2,h_3);
+    
+    c1->Update();
+    c1->SaveAs(name1+TString(".png"));
+    c1->SaveAs(name1+TString(".C"));
+    
+    if (destructor){
+        delete c1;
+        delete h_1;
+        delete h_2;
+        delete leg;
+    }
+    
+}
+
+//
+// MakeXi Plot: create Xi plots for Z.
+//
+void MakeXiAll(TString type){
+    
+    gStyle->SetOptStat("em");
+    
+    TCanvas *c1 = new TCanvas("xiAllGapPlus","xiAllGapPlus",2000,400);
+    c1->Divide(4,1);
+    
+    TCanvas *c2 = new TCanvas("xiAllGapMinus","xiAllGapMinus",2000,400);
+    c2->Divide(4,1);
+    
+    TCanvas *c3 = new TCanvas("xiPlusGapMinus","xiPlusGapMinus",2000,400);
+    c3->Divide(4,1);
+    
+    TCanvas *c4 = new TCanvas("xiPlusGapPlus","xiPlusGapPlus",2000,400);
+    c4->Divide(4,1);
+    
+    TCanvas *c5 = new TCanvas("xiMinusGapMinus","xiMinusGapMinus",2000,400);
+    c5->Divide(4,1);
+    
+    TCanvas *c6 = new TCanvas("xiMinusGapPlus","xiMinusGapPlus",2000,400);
+    c6->Divide(4,1);
+    
+    gPad->SetLogx();
+    gPad->SetLogy();
+
+    TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
+    TString legdata, legmc1, legmc2;
+    
+    if (type == "muon" || type == "Muon" || type == "MUON"){
+        TFile *l1  = TFile::Open("histo_Muon_Reco.root");
+        TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
+        TFile *l3  = TFile::Open("histo_Pompyt_muon_Reco.root");
+        legdata = "2010 data";
+        legmc1 = "Pythia6, DY to #mu^{+}#mu^{-}";
+        legmc2 = "Pompyt, Z to #mu^{+}#mu^{-}";
+    }
+    else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
+        TFile *l1  = TFile::Open("histo_Electron_Reco.root");
+        TFile *l2  = TFile::Open("histo_DyToEE_Reco.root");
+        TFile *l3  = TFile::Open("histo_Pompyt_electron_Reco.root");
+        legdata = "2010 data";
+        legmc1 = "Pythia6, DY to e^{+}e^{-}";
+        legmc2 = "Pompyt, Z to e^{+}e^{-}";
+    }
+    else {
+        std::cout << "Please, put correct option." << std::endl;
+        exit(0);
+    }
+    
+    TString name_xi1 = "xiPF_single_step7";
+    TString name_xi2 = "xiPF_single_GapHFMinus";
+    TString name_xi3 = "xiPF_single_GapHFMinusAndCastor";
+    TString name_xi4 = "xiPF_single_GapHFMinusAndCastorZKinPositive";
+    
+    TString name_xi5 = "xiPF_single_step7";
+    TString name_xi6 = "xiPF_single_GapHFPlus";
+    TString name_xi7 = "xiPF_single_GapHFPlusAndCastorActivity";
+    TString name_xi8 = "xiPF_single_GapHFPlusAndCastorActivityZKinNegative";
+    
+    TString name_xi9 = "xiPlusPF_single_step7";
+    TString name_xi10 = "xiPlusPF_single_GapHFMinus";
+    TString name_xi11 = "xiPlusPF_single_GapHFMinusAndCastor";
+    TString name_xi12 = "xiPlusPF_single_GapHFMinusAndCastorZKinPositive";
+    
+    TString name_xi13 = "xiPlusPF_single_step7";
+    TString name_xi14 = "xiPlusPF_single_GapHFPlus";
+    TString name_xi15 = "xiPlusPF_single_GapHFPlusAndCastorActivity";
+    TString name_xi16 = "xiPlusPF_single_GapHFPlusAndCastorActivityZKinNegative";
+    
+    TString name_xi17 = "xiMinusPF_single_step7";
+    TString name_xi18 = "xiMinusPF_single_GapHFMinus";
+    TString name_xi19 = "xiMinusPF_single_GapHFMinusAndCastor";
+    TString name_xi20 = "xiMinusPF_single_GapHFMinusAndCastorZKinPositive";
+    
+    TString name_xi21 = "xiMinusPF_single_step7";
+    TString name_xi22 = "xiMinusPF_single_GapHFPlus";
+    TString name_xi23 = "xiMinusPF_single_GapHFPlusAndCastorActivity";
+    TString name_xi24 = "xiMinusPF_single_GapHFPlusAndCastorActivityZKinNegative";
+    
+    vector<TString> histoname_xi;
+    histoname_xi.push_back(name_xi1);
+    histoname_xi.push_back(name_xi2);
+    histoname_xi.push_back(name_xi3);
+    histoname_xi.push_back(name_xi4);
+    histoname_xi.push_back(name_xi5);
+    histoname_xi.push_back(name_xi6);
+    histoname_xi.push_back(name_xi7);
+    histoname_xi.push_back(name_xi8);
+    histoname_xi.push_back(name_xi9);
+    histoname_xi.push_back(name_xi10);
+    histoname_xi.push_back(name_xi11);
+    histoname_xi.push_back(name_xi12);
+    histoname_xi.push_back(name_xi13);
+    histoname_xi.push_back(name_xi14);
+    histoname_xi.push_back(name_xi15);
+    histoname_xi.push_back(name_xi16);
+    histoname_xi.push_back(name_xi17);
+    histoname_xi.push_back(name_xi18);
+    histoname_xi.push_back(name_xi19);
+    histoname_xi.push_back(name_xi20);
+    histoname_xi.push_back(name_xi21);
+    histoname_xi.push_back(name_xi22);
+    histoname_xi.push_back(name_xi23);
+    histoname_xi.push_back(name_xi24);
+    
+    double weight1 = 0.;
+    double weight2 = 0.;
+    double weight3 = 0.;
+    double ratio1 = 0.;
+    double ratio2 = 0.;
+
+    TH1F* h_1w = (TH1F*)l1->Get("xiPF_single_step7");
+    TH1F* h_2w = (TH1F*)l2->Get("xiPF_single_step7");
+    TH1F* h_3w = (TH1F*)l3->Get("xiPF_single_step7");
+    
+    weight1 = 1./h_1w->GetEntries();
+    weight2 = 1./h_2w->GetEntries();
+    weight3 = 1./h_3w->GetEntries();
+    
+    ratio1 = weight2/weight1;
+    ratio2 = weight3/weight1;
+    
+    double xi_bin[9]={0.0003,0.002,0.0045,0.01,0.02,0.04,0.06,0.08,0.1};
+    
+    for (unsigned i=0; i<histoname_xi.size(); i++){
+        
+        /*
+        TH1F* h_1new = (TH1F*)l1->Get(histoname_xi[i]);
+        TH1F* h_2new = (TH1F*)l2->Get(histoname_xi[i]);
+        TH1F* h_3new = (TH1F*)l3->Get(histoname_xi[i]);
+
+        h_1new->Rebin(8,"h_1xi",xi_bin);
+        h_2new->Rebin(8,"h_2xi",xi_bin);
+        h_3new->Rebin(8,"h_3xi",xi_bin);
+        */
+        
+        TH1F* h_1xi= (TH1F*)l1->Get(histoname_xi[i]);
+        TH1F* h_2xi = (TH1F*)l2->Get(histoname_xi[i]);
+        TH1F* h_3xi = (TH1F*)l3->Get(histoname_xi[i]);
+        
+        h_1xi->SetLineColor(kBlack);
+        h_1xi->SetMarkerStyle(20);
+        h_1xi->SetMarkerSize(0.8);
+        h_1xi->GetYaxis()->SetTitle("N Events");
+        if (i==0) leg->AddEntry(h_1xi,legdata,"p");
+        
+        h_2xi->SetLineColor(kRed);
+        h_2xi->SetLineWidth(2);
+        h_2xi->Scale(ratio1);
+        h_2xi->SetFillColor(kRed-4);
+        h_2xi->SetFillStyle(3020);
+        h_2xi->GetYaxis()->SetTitle("N Events");
+        if(i==0)leg->AddEntry(h_2xi,legmc1,"LFP");
+        
+        h_3xi->SetLineColor(kBlue);
+        h_3xi->SetLineWidth(2);
+        h_3xi->Scale(ratio2);
+        h_3xi->SetFillColor(kBlue-4);
+        h_3xi->SetFillStyle(3020);
+        h_3xi->GetYaxis()->SetTitle("N Events");
+        if(i==0)leg->AddEntry(h_3xi,legmc2,"LFP");
+        
+        if (i>=0 && i<=3) c1->cd(i+1);
+        if (i>=4 && i<=7) c2->cd(i-3);
+        if (i>=8 && i<=11) c3->cd(i-7);
+        if (i>=12 && i<=15) c4->cd(i-11);
+        if (i>=16 && i<=19) c5->cd(i-15);
+        if (i>=20 && i<=23) c6->cd(i-19);
+        
+        h_1xi->Draw("ep");
+        h_2xi->Draw("histosame");
+        h_3xi->Draw("histosame");
+        
+        //NFitMCToData(h_1xi,h_2xi,h_3xi);
+        
+        leg->Draw("histosames");
+        
+    }
+    
 }
 
 //

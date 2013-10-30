@@ -152,6 +152,10 @@ void MakeMultipleSingle(TString type){
 
   TCanvas *c7 = new TCanvas("multiple7","multiple7",2000,1000);
   c7->Divide(4,4);
+    
+  TCanvas *c8 = new TCanvas("multiple8","multiple8",500,500);
+
+  TCanvas *c9 = new TCanvas("multiple9","multiple9",500,500);
 
   TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
 
@@ -165,7 +169,6 @@ void MakeMultipleSingle(TString type){
     std::cout << "Please, put correct option." << std::endl;
     exit(0);
   }
-
 
   for (int i=1; i< 17; i++){
     char name[300];
@@ -253,9 +256,23 @@ void MakeMultipleSingle(TString type){
     sprintf(name6,"AlongZ_Sector%d_EnergyVsModuleTProf_step7",i);
     TProfile* h_1g = (TProfile*)l1->Get(name6);
     c7->cd(i);
+    h_1g->SetMarkerStyle(8);
+    h_1g->SetMarkerSize(1.1);
     h_1g->GetYaxis()->SetTitleOffset(1.4);
-    h_1g->Draw();
+    h_1g->Draw("ep");
   }
+   
+    TProfile* h_1h = (TProfile*)l1->Get("MultiplicityPerModuleTProf_step7");
+    c8->cd();
+    h_1h->GetYaxis()->SetTitleOffset(1.4);
+    h_1h->Draw();
+
+    TH2F* h_1i = (TH2F*)l1->Get("MultiplicityPerModule_step7");
+    c9->cd();
+    gStyle->SetPalette(1);
+    h_1i->GetYaxis()->SetTitleOffset(1.4);
+    h_1i->Draw("colz");
+    
 
 }
 

@@ -39,10 +39,10 @@ NHSetMarker(TH1 *histo, Color,Style,Size)
  */
 
 /* void NDelete(string name){
-  gDirectory->Delete(name);
-  return;
-}
-*/
+   gDirectory->Delete(name);
+   return;
+   }
+ */
 
 // ***********************
 
@@ -66,7 +66,7 @@ Float_t meanEvt( Float_t LumInt){
   cout << "Average events = " << Lum_bunch << endl;
 
   return(Lum_bunch);
- 
+
 }
 
 //==*******************==//
@@ -81,7 +81,7 @@ Float_t prob( Float_t LumInt, int nevt){
   // cout << "Average events = " << Lum_bunch << endl;
 
   return(pois_prob);
- 
+
 }
 
 
@@ -96,7 +96,7 @@ Float_t prob_ghost( Float_t LumInt, int nevt){
   cout << "Average ghost events = " << Lum_bunch << endl;
 
   return(pois_prob);
- 
+
 }
 
 //==============================
@@ -117,8 +117,8 @@ Float_t PtWeight( Float_t Pt){
 Float_t xi(Float_t xi_PF_plus, Float_t xi_PF_minus){
   if (xi_PF_plus < xi_PF_minus) {
     return(xi_PF_plus);
-      }			  
-    return(xi_PF_minus);
+  }			  
+  return(xi_PF_minus);
 } 
 
 //==****************************** // 
@@ -127,8 +127,8 @@ Float_t xi(Float_t xi_PF_plus, Float_t xi_PF_minus){
 Float_t EHF(Float_t sumEHF_plus, Float_t sumEHF_minus){
   if (sumEHF_plus < sumEHF_minus) {
     return(sumEHF_plus);
-      }			  
-    return(sumEHF_minus);
+  }			  
+  return(sumEHF_minus);
 }  
 
 ///==******************==/
@@ -165,8 +165,8 @@ void NText(Float_t x1, Float_t y1, string text, Int_t col=1, Float_t Tsize=0.04)
   TLatex l;
   l.SetTextSize(Tsize);
   l.SetTextColor(col);
- l.DrawLatex(x1,y1,text.c_str())   ;
- return;
+  l.DrawLatex(x1,y1,text.c_str())   ;
+  return;
 }
 
 // *********************
@@ -175,8 +175,8 @@ void NText(Float_t x1, Float_t y1, string text, Int_t col=1, Float_t Tsize=0.04)
   tree_->SetMarkerSize(size);
   tree_->SetMarkerColor(color);
   return;
-}
-*/
+  }
+ */
 // ********************************
 
 
@@ -299,19 +299,19 @@ Float_t IsItaZ(Float_t mass){
 
   Float_t mass_up,mass_low;
   Int_t i = 0.;
-    
+
   Float_t zmmprob[30] = {0,0.00151172,0.00377929,0.000755858,0.00529101,0.00529101,0.00604686,0.00604686,0.0120937,0.00831444,0.0120937,0.0226757,0.0279667,0.0468632,0.0733182,0.179138,0.266062,0.187453,0.0702948,0.0279667,0.010582,0.00755858,0.00151172,0.00377929,0.00453515,0.00151172,0.000755858,0.00226757,0.000755858,0.00151172};
 
   cout << zmmprob[3] << endl;
   for (i=0; i<30; i++)
-    {
-      mass_low = 60+i*2;
-      mass_up = 62+i*2;    
-      if (mass>=mass_low && mass<mass_up){
-	cout << "The number  of Z->mm events in the interval "<< mass_low << " << Mx << " << mass_up << " is = " << 100*zmmprob[i]<< " %" <<endl;
-	return(zmmprob[i]);
-      }
-    }		      
+  {
+    mass_low = 60+i*2;
+    mass_up = 62+i*2;    
+    if (mass>=mass_low && mass<mass_up){
+      cout << "The number  of Z->mm events in the interval "<< mass_low << " << Mx << " << mass_up << " is = " << 100*zmmprob[i]<< " %" <<endl;
+      return(zmmprob[i]);
+    }
+  }		      
   cout << "No fraction found for your mass value" << endl;
   return 0.;
 }
@@ -328,16 +328,16 @@ Float_t HFCor(Float_t istlumiPerBX, Float_t EHF)
   Float_t xu;
   const int xbin = 15;
   Float_t xlow[xbin] = {0., 4.,10.,20.,40.,60.,90.,120.,
-			150.,250.,400.,600.,800.,1000.,15000. };
+    150.,250.,400.,600.,800.,1000.,15000. };
   Float_t slope[xbin-1] = {3.08909,1.48380, 1.08810, 0.751990,
-			   0.587490,0.456329,0.318799,0.208317,
-			   0.0850781,-0.113282,-0.349362,-0.729234,
-			   -1.53780,-2.74242};
-  
-  
+    0.587490,0.456329,0.318799,0.208317,
+    0.0850781,-0.113282,-0.349362,-0.729234,
+    -1.53780,-2.74242};
+
+
   if(x > 0.05) {
     for (int i=0; i<15; i++) {
-      
+
       xl = xlow[i];
       xu = xlow[i+1];
       if ( EHF >=xl && EHF < xu) return(pow(2.71, slope[i]*x));
@@ -393,10 +393,10 @@ void NH1FMax1(TH1 *file1){
   Int_t Max1 = file1->GetMaximumBin();
   Float_t Max1Cont = file1->GetBinContent(Max1); 
   if (Max1Cont == 0) 
-    {
-      cout << "NH1FMax1: Empty Histo!!" << endl;
-      return;
-    }
+  {
+    cout << "NH1FMax1: Empty Histo!!" << endl;
+    return;
+  }
   Float_t scale = 1./Max1Cont;
   file1->Scale(scale);
   return;
@@ -424,10 +424,10 @@ void NH2FArea1(TH2F *file1){
 
   Int_t Max1 = file1->Integral();
   if (Max1 == 0) 
-    {
-      cout << "NH2FArea1: Empty Histo!!" << endl;
-      return;
-    }
+  {
+    cout << "NH2FArea1: Empty Histo!!" << endl;
+    return;
+  }
 
   file1->Scale(1./Max1);
   return;
@@ -446,6 +446,41 @@ Float_t deltaPhi(double phi1, double phi2) {
   while (result > M_PI) result -= 2*M_PI;
   while (result <= -M_PI) result += 2*M_PI;
   return result;
-  }
+}
 
+void StyleNice(){
+
+  //gStyle->SetOptStat(0);
+  gStyle->SetOptTitle(0);
+
+  gStyle->SetPadLeftMargin(0.2);
+  gStyle->SetPadBottomMargin(0.2);
+  gStyle->SetLegendBorderSize(0);
+
+  gStyle->SetMarkerStyle(20);
+  gStyle->SetMarkerSize(1.);
+
+  gStyle->SetTitleSize(0.0845,"X");
+  gStyle->SetTitleSize(0.0845,"Y");
+
+  gStyle->SetLabelSize(0.06,"X");
+  gStyle->SetLabelSize(0.06,"Y");
+
+  gStyle->SetLabelOffset(0.01,"Y");
+  gStyle->SetLabelOffset(0.01,"X");
+
+  gStyle->SetTitleOffset(0.8,"Y");
+  gStyle->SetTitleOffset(1.06,"X");
+
+  gStyle->SetLineWidth(3);
+  gStyle->SetHistLineWidth(2);
+
+  gStyle->SetPadTickX(1);
+  gStyle->SetPadTickY(1);
+  gStyle->SetTickLength(0.01,"Y");
+  gStyle->SetTickLength(0.02,"X");
+
+  gROOT->ForceStyle();
+
+}
 
