@@ -298,7 +298,7 @@ void MakeMultipleSingle(TString type){
     for (int j=1; j< 5;j++){
       gStyle->SetPalette(1);
       char name7[300];
-      sprintf(name7,"CastorMappingMultiplicities_module%d_snapshot%d",i,j);
+      sprintf(name7,"CastorMappingMultiplicities_module_%d_snapshot_%d",i,j);
       TH2F* h_1l = (TH2F*)l1->Get(name7);
       c11->cd(i);
       h_1l->SetMarkerStyle(8);
@@ -312,7 +312,7 @@ void MakeMultipleSingle(TString type){
     for (int j=1; j< 5;j++){
       gStyle->SetPalette(1);
       char name8[300];
-      sprintf(name8,"CastorMappingEnergy_module%d_snapshot%d",i,j);
+      sprintf(name8,"CastorMappingEnergy_module%d_snapshot_%d",i,j);
       TH2F* h_1m = (TH2F*)l1->Get(name8);
       c12->cd(i);
       h_1m->SetMarkerStyle(8);
