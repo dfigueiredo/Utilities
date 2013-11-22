@@ -17,11 +17,12 @@ No defense for empyt histograms or files. Private use.
 
 
 void CastorPlotter(){
-
-  MakeMultipleSingle("muon");
+  //StyleNice();
+  //MakeMultipleSingle("muon");
   //ThresholdsStudiesChannels("histo_Castor_threshold_p1_unpaired.root","unpaired",0,1);
   //ThresholdsStudiesSectors("histo_Castor_threshold_p2_unpaired.root","unpaired",0,1);
   //ThresholdsStudiesSectors("histo_Castor_threshold_p3_unpaired.root","unpaired",0,1);
+  CalculateCorrector("CastorMappingEnergy_step7");
 
 }
 
@@ -157,7 +158,8 @@ void MakeMultipleSingle(TString type){
 
   TCanvas *c9 = new TCanvas("multiple9","multiple9",500,500);
 
-  TCanvas *c10 = new TCanvas("multiple10","multiple10",500,500);
+  TCanvas *c10 = new TCanvas("multiple10","multiple10",1000,500);
+  c10->Divide(2,1);
 
   TCanvas *c11 = new TCanvas("multiple11","multiple11",1000,2000);
   c11->Divide(5,5);
@@ -169,7 +171,9 @@ void MakeMultipleSingle(TString type){
   TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
 
   if (type == "muon" || type == "Muon" || type == "MUON"){
-    TFile *l1  = TFile::Open("histo_Castor_muon.root");
+    //TFile *l1  = TFile::Open("histo_Castor_muon.root");
+    TFile *l1  = TFile::Open("histo_DyToMuMu_RECO.root");
+    TFile *l1mc  = TFile::Open("histo_DyToMuMu_RECO.root");
   }
   else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
     TFile *l1  = TFile::Open("histo_Castor_electron.root");
@@ -183,15 +187,24 @@ void MakeMultipleSingle(TString type){
     char name[300];
     sprintf(name,"TotalEnergySector%d_step7",i);
     TH1F* h_1 = (TH1F*)l1->Get(name);
-    TH1F* h_2 = h_1->Clone();
-    h_2->Reset();
-    h_2->SetMaximum(1.);
+    //TH1F* h_2 = h_1->Clone();
+    TH1F* h_3 = (TH1F*)l1mc->Get(name);
+    //h_2->Reset();
+    //h_2->SetMaximum(1.);
     c1->cd(i);
-    gPad->SetLogx(1);
+    //gPad->SetLogx(1);
     gPad->SetLogy(1);
-    h_2->Draw();
+    //h_2->Draw();
+    //h_1->SetMarkerStyle(8);
+    //h_1->SetMarkerSize(1.1);
+    h_3->SetLineColor(kRed);
+    h_3->SetLineWidth(1.1);
     h_1->GetYaxis()->SetTitleOffset(1.4);
-    h_1->DrawNormalized("same");
+    h_1->GetXaxis()->SetRangeUser(0.,10.);
+    h_3->GetXaxis()->SetRangeUser(0.,10.);
+    h_1->DrawNormalized("histo");
+    h_3->DrawNormalized("histosame");
+    h_1->SetMaximum(1.);
   }
 
   for (int i=1; i< 17; i++){
@@ -233,7 +246,7 @@ void MakeMultipleSingle(TString type){
     h_1d->SetMarkerColor(i);
     h_1->SetMarkerSize(1.5);
     h_1d->SetMarkerStyle(8);
-    h_1d->GetYaxis()->SetRangeUser(0.,600.);
+    h_1d->GetYaxis()->SetRangeUser(0.,15000.);
     h_1d->SetTitle("Multiplicity");
     char legtitle[300];
     sprintf(legtitle,"Module %d",i);
@@ -264,11 +277,19 @@ void MakeMultipleSingle(TString type){
     char name6[300];
     sprintf(name6,"AlongZ_Sector%d_EnergyVsModuleTProf_step7",i);
     TProfile* h_1g = (TProfile*)l1->Get(name6);
+    TProfile* h_1gmc = (TProfile*)l1mc->Get(name6);
     c7->cd(i);
     h_1g->SetMarkerStyle(8);
     h_1g->SetMarkerSize(1.1);
     h_1g->GetYaxis()->SetTitleOffset(1.4);
+    h_1gmc->SetMarkerStyle(8);
+    h_1gmc->SetMarkerColor(kRed);
+    h_1gmc->SetMarkerSize(1.1);
+    h_1gmc->GetYaxis()->SetTitleOffset(1.4);
     h_1g->Draw("ep");
+    h_1gmc->GetYaxis()->SetRangeUser(0.,35.);
+    h_1g->GetYaxis()->SetRangeUser(0.,35.);
+    h_1gmc->Draw("epsame");
   }
 
   TProfile* h_1h = (TProfile*)l1->Get("MultiplicityPerModuleTProf_step7");
@@ -285,22 +306,29 @@ void MakeMultipleSingle(TString type){
   TH2F* h_1j = (TH2F*)l1->Get("CastorMappingMultiplicities_step7");
   c10->cd(1);
   gStyle->SetPalette(1);
+  h_1j->GetYaxis()->SetTitle("Sector (#phi)");
   h_1j->GetYaxis()->SetTitleOffset(1.4);
   h_1j->Draw("colz");
 
   TH2F* h_1k = (TH2F*)l1->Get("CastorMappingEnergy_step7");
   c10->cd(2);
   gStyle->SetPalette(1);
+  h_1k->GetYaxis()->SetTitle("Sector (#phi)");
   h_1k->GetYaxis()->SetTitleOffset(1.4);
   h_1k->Draw("colz");
 
-  for (int i=1; i< 5; i++){
-    for (int j=1; j< 5;j++){
+
+  //TFile *ld  = TFile::Open("histo_Castor_muonp2.root");
+  TFile *ld  = TFile::Open("histo_DyToMuMu_RECO.root");
+  int display1;
+  for (int i=1; i< 6; i++){
+    for (int j=1; j< 6;j++){
+      display1++;
       gStyle->SetPalette(1);
       char name7[300];
       sprintf(name7,"CastorMappingMultiplicities_module_%d_snapshot_%d",i,j);
-      TH2F* h_1l = (TH2F*)l1->Get(name7);
-      c11->cd(i);
+      TH2F* h_1l = (TH2F*)ld->Get(name7);
+      c11->cd(display1);
       h_1l->SetMarkerStyle(8);
       h_1l->SetMarkerSize(1.1);
       h_1l->GetYaxis()->SetTitleOffset(1.4);
@@ -308,13 +336,15 @@ void MakeMultipleSingle(TString type){
     }
   }
 
-  for (int i=1; i< 5; i++){
-    for (int j=1; j< 5;j++){
+  int display2;
+  for (int i=1; i< 6; i++){
+    for (int j=1; j< 6;j++){
+      display2++;
       gStyle->SetPalette(1);
       char name8[300];
       sprintf(name8,"CastorMappingEnergy_module_%d_snapshot_%d",i,j);
-      TH2F* h_1m = (TH2F*)l1->Get(name8);
-      c12->cd(i);
+      TH2F* h_1m = (TH2F*)ld->Get(name8);
+      c12->cd(display2);
       h_1m->SetMarkerStyle(8);
       h_1m->SetMarkerSize(1.1);
       h_1m->GetYaxis()->SetTitleOffset(1.4);
@@ -539,9 +569,9 @@ void ThresholdsStudiesChannels(TString openfile, TString complement, bool printP
 
   c6->cd();
   gr = new TGraphErrors(80,x,y,ex,ey);
-  gr->SetTitle("Castor Threshold per Sector");
+  gr->SetTitle("Castor Threshold per Channel");
   gr->GetYaxis()->SetTitle("Threshold [GeV]");
-  gr->GetXaxis()->SetTitle("Sector");
+  gr->GetXaxis()->SetTitle("Channel");
   gr->SetMarkerSize(1.);
   gr->GetYaxis()->SetTitleOffset(1.4);
   gr->SetMarkerStyle(21);
@@ -550,9 +580,9 @@ void ThresholdsStudiesChannels(TString openfile, TString complement, bool printP
 
   c7->cd();
   grs = new TGraphErrors(80,x,ys,ex,eys);
-  grs->SetTitle("#sigma_{fit} per Sector");
+  grs->SetTitle("#sigma_{fit} per Channel");
   grs->GetYaxis()->SetTitle("#sigma_{fit} [GeV]");
-  grs->GetXaxis()->SetTitle("Sector");
+  grs->GetXaxis()->SetTitle("Channel");
   grs->SetMarkerSize(1.);
   grs->SetMarkerStyle(21);
   grs->GetYaxis()->SetTitleOffset(1.4);
@@ -800,6 +830,88 @@ void NoiseDifferentPeriods(TString name,bool logscale){
   c1->SaveAs(name+TString(".png"));
 
 }
+
+
+//
+// Histograms: create correction mapping
+//
+void CalculateCorrector(TString name){
+
+  TCanvas *c1 = new TCanvas("factors","factors",1000,500);
+  c1->Divide(3,1);
+
+  TH1::SetDefaultSumw2(true);
+  TH2::SetDefaultSumw2(true);
+
+  gStyle->SetOptStat(0);
+  gStyle->SetPalette(1);
+
+  TFile *l1  = TFile::Open("histo_Castor_muon.root");
+  TFile *l2  = TFile::Open("histo_DyToMuMu_RECO.root");
+
+  TH2F* h_1 = (TH2F*)l1->Get(name);
+  TH2F* h_2 = (TH2F*)l2->Get(name);
+
+  int nBinsX = h_1->GetXaxis()->GetNbins();
+  int nBinsY = h_2->GetYaxis()->GetNbins();
+
+  // Integral Bin by Bin
+  double factor1d = h_1->Integral(1,1,0,nBinsY);
+  double factor2d = h_1->Integral(2,2,0,nBinsY);
+  double factor3d = h_1->Integral(3,3,0,nBinsY);
+  double factor4d = h_1->Integral(4,4,0,nBinsY);
+  double factor5d = h_1->Integral(5,5,0,nBinsY);
+
+  double factor1m = h_2->Integral(1,1,0,nBinsY);
+  double factor2m = h_2->Integral(2,2,0,nBinsY);
+  double factor3m = h_2->Integral(3,3,0,nBinsY);
+  double factor4m = h_2->Integral(4,4,0,nBinsY);
+  double factor5m = h_2->Integral(5,5,0,nBinsY);
+
+  for(int i=1;i<=nBinsY; i++){
+    h_1->SetBinContent(1,i,h_1->GetBinContent(1,i)/factor1d);
+    h_1->SetBinContent(2,i,h_1->GetBinContent(2,i)/factor2d);
+    h_1->SetBinContent(3,i,h_1->GetBinContent(3,i)/factor3d);
+    h_1->SetBinContent(4,i,h_1->GetBinContent(4,i)/factor4d);
+    h_1->SetBinContent(5,i,h_1->GetBinContent(5,i)/factor5d);
+
+    h_2->SetBinContent(1,i,h_2->GetBinContent(1,i)/factor1m);
+    h_2->SetBinContent(2,i,h_2->GetBinContent(2,i)/factor2m);
+    h_2->SetBinContent(3,i,h_2->GetBinContent(3,i)/factor3m);
+    h_2->SetBinContent(4,i,h_2->GetBinContent(4,i)/factor4m);
+    h_2->SetBinContent(5,i,h_2->GetBinContent(5,i)/factor5m);
+  }
+
+  double factor1ds = h_1->Integral(1,1,0,nBinsY);
+  double factor2ds = h_1->Integral(2,2,0,nBinsY);
+  double factor3ds = h_1->Integral(3,3,0,nBinsY);
+  double factor4ds = h_1->Integral(4,4,0,nBinsY);
+  double factor5ds = h_1->Integral(5,5,0,nBinsY);
+
+  double factor1ms = h_2->Integral(1,1,0,nBinsY);
+  double factor2ms = h_2->Integral(2,2,0,nBinsY);
+  double factor3ms = h_2->Integral(3,3,0,nBinsY);
+  double factor4ms = h_2->Integral(4,4,0,nBinsY);
+  double factor5ms = h_2->Integral(5,5,0,nBinsY);
+
+  TH2F* ratio = (TH2F*)h_1->Clone();
+  ratio->SetTitle("Correction Channels Factors");
+  ratio->Divide(h_2);
+
+  c1->cd(1);
+  h_1->SetTitle("Pattern Data Energy, weighted");
+  h_1->Draw();
+  c1->cd(2);
+  h_2->SetTitle("Pattern MC Energy, weighted");
+  h_2->Draw();
+  c1->cd(3);
+  ratio->Draw();
+
+  TFile f("channelcorrector.root","recreate");
+  ratio->Write("channelcorrector");
+
+}
+
 
 //
 // Histograms: configure colors
