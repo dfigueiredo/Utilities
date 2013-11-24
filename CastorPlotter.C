@@ -22,7 +22,14 @@ void CastorPlotter(){
   //ThresholdsStudiesChannels("histo_Castor_threshold_p1_unpaired.root","unpaired",0,1);
   //ThresholdsStudiesSectors("histo_Castor_threshold_p2_unpaired.root","unpaired",0,1);
   //ThresholdsStudiesSectors("histo_Castor_threshold_p3_unpaired.root","unpaired",0,1);
-  CalculateCorrector("CastorMappingEnergy_step7");
+  //CalculateCorrector("CastorMappingEnergySelection0_step7","ratio_all.root");
+  //CalculateCorrector("CastorMappingEnergySelection1_step7","ratio_step1.root");
+  //CalculateCorrector("CastorMappingEnergySelection2_step7","ratio_step2.root");
+  //CalculateCorrector("CastorMappingEnergySelection3_step7","ratio_step3.root");
+  //CalculateCorrector("CastorMappingEnergySelection4_step7","ratio_step4.root");
+  //CalculateCorrector("CastorMappingEnergySelection5_step7","ratio_step5.root");
+  //CalculateCorrector("CastorMappingEnergySelection6_step7","ratio_step6.root");
+  CalculateCorrectorFlow();
 
 }
 
@@ -831,13 +838,128 @@ void NoiseDifferentPeriods(TString name,bool logscale){
 
 }
 
+//
+// Make Correction Evolution Plots
+//
+void CalculateCorrectorFlow(){
+
+  TCanvas *c1 = new TCanvas("module1","module1",1200,1200);
+  c1->Divide(4,4);
+
+  TCanvas *c2 = new TCanvas("module2","module2",1200,1200);
+  c2->Divide(4,4);
+
+  TCanvas *c3 = new TCanvas("module3","module3",1200,1200);
+  c3->Divide(4,4);
+
+  TCanvas *c4 = new TCanvas("module4","module4",1200,1200);
+  c4->Divide(4,4);
+
+  TCanvas *c5 = new TCanvas("module5","module5",1200,1200);
+  c5->Divide(4,4);
+
+  TH1::SetDefaultSumw2(true);
+  TH2::SetDefaultSumw2(true);
+
+  gStyle->SetOptStat(0);
+  gStyle->SetPalette(1);
+
+  TFile *l1  = TFile::Open("ratio_step1.root");
+  TFile *l2  = TFile::Open("ratio_step2.root");
+  TFile *l3  = TFile::Open("ratio_step3.root");
+  TFile *l4  = TFile::Open("ratio_step4.root");
+  TFile *l5  = TFile::Open("ratio_step5.root");
+  TFile *l6  = TFile::Open("ratio_step6.root");
+
+  TH2F* h_1 = (TH2F*)l1->Get("channelcorrector");
+  TH2F* h_2 = (TH2F*)l2->Get("channelcorrector");
+  TH2F* h_3 = (TH2F*)l3->Get("channelcorrector");
+  TH2F* h_4 = (TH2F*)l4->Get("channelcorrector");
+  TH2F* h_5 = (TH2F*)l5->Get("channelcorrector");
+  TH2F* h_6 = (TH2F*)l6->Get("channelcorrector");
+
+  for(int j=1;j<6;j++){
+    for (int i=1;i<17;i++){
+
+      char name[300];
+      char title[300];
+      char textfit[300];
+      double acorr = 0;
+
+      if(j==1){
+	sprintf(name,"Channel%d",i);
+	sprintf(title,"Channel %d;#sum E_{CASTOR}; Coefficient Factor",i);
+	c1->cd(i);
+      }
+
+      if(j==2){
+	sprintf(name,"Channel%d",i+16);
+	sprintf(title,"Channel %d;#sum E_{CASTOR}; Coefficient Factor",i+16);
+	c2->cd(i);
+      }
+
+      if(j==3){
+	sprintf(name,"Channel%d",i+32);
+	sprintf(title,"Channel %d;#sum E_{CASTOR}; Coefficient Factor",i+32);
+	c3->cd(i);
+      }
+
+      if(j==4){
+	sprintf(name,"Channel%d",i+48);
+	sprintf(title,"Channel %d;#sum E_{CASTOR}; Coefficient Factor",i+48);
+	c4->cd(i);
+      }
+
+      if(j==5){
+	sprintf(name,"Channel%d",i+64);
+	sprintf(title,"Channel %d;#sum E_{CASTOR}; Coefficient Factor",i+64);
+	c5->cd(i);
+      }
+
+      TH1F* h=new TH1F(name,title, 6, 0, 300);
+      h->SetBinContent(1,h_1->GetBinContent(j,i));
+      h->SetBinContent(2,h_2->GetBinContent(j,i));
+      h->SetBinContent(3,h_3->GetBinContent(j,i));
+      h->SetBinContent(4,h_4->GetBinContent(j,i));
+      h->SetBinContent(5,h_5->GetBinContent(j,i));
+      h->SetBinContent(6,h_6->GetBinContent(j,i));
+      acorr = (h_1->GetBinContent(j,i) + h_2->GetBinContent(j,i) + h_3->GetBinContent(j,i) + h_4->GetBinContent(j,i) + h_5->GetBinContent(j,i) + h_6->GetBinContent(j,i))/6.; 
+      /*      h->SetBinError(1,h_1->GetBinError(j,i));
+	      h->SetBinError(2,h_2->GetBinError(j,i));
+	      h->SetBinError(3,h_3->GetBinError(j,i));
+	      h->SetBinError(4,h_4->GetBinError(j,i));
+	      h->SetBinError(5,h_5->GetBinError(j,i));
+	      h->SetBinError(6,h_6->GetBinError(j,i));*/
+      h->GetYaxis()->SetRangeUser(0.,3.);
+      h->SetMarkerSize(1);
+      h->SetMarkerStyle(20);
+      h->Draw("P");
+      //h->Fit("pol0");
+
+      sprintf(textfit,"%g",acorr);
+      TLatex *hfit = new TLatex(0.7,160,textfit);
+      hfit->SetTextSize(0.1);
+      hfit->SetTextFont(72);
+      hfit->SetTextColor(kBlack);
+      hfit->DrawLatex(175,2.5,textfit);
+
+      TLine *line = new TLine(0,acorr,300,acorr);
+      line->SetLineColor(8);
+      line->SetLineWidth(3);
+      line->Draw();
+
+    }
+  }
+
+}
+
 
 //
 // Histograms: create correction mapping
 //
-void CalculateCorrector(TString name){
+void CalculateCorrector(TString name,TString output){
 
-  TCanvas *c1 = new TCanvas("factors","factors",1000,500);
+  TCanvas *c1 = new TCanvas("factors","factors",1400,400);
   c1->Divide(3,1);
 
   TH1::SetDefaultSumw2(true);
@@ -847,7 +969,7 @@ void CalculateCorrector(TString name){
   gStyle->SetPalette(1);
 
   TFile *l1  = TFile::Open("histo_Castor_muon.root");
-  TFile *l2  = TFile::Open("histo_DyToMuMu_RECO.root");
+  TFile *l2  = TFile::Open("histo_DyToMuMu_RECO_nocor.root");
 
   TH2F* h_1 = (TH2F*)l1->Get(name);
   TH2F* h_2 = (TH2F*)l2->Get(name);
@@ -899,15 +1021,15 @@ void CalculateCorrector(TString name){
   ratio->Divide(h_2);
 
   c1->cd(1);
-  h_1->SetTitle("Pattern Data Energy, weighted");
+  h_1->SetTitle("Pattern Data Energy, normalized");
   h_1->Draw();
   c1->cd(2);
-  h_2->SetTitle("Pattern MC Energy, weighted");
+  h_2->SetTitle("Pattern MC Energy, normalized");
   h_2->Draw();
   c1->cd(3);
   ratio->Draw();
 
-  TFile f("channelcorrector.root","recreate");
+  TFile f(output,"recreate");
   ratio->Write("channelcorrector");
 
 }
