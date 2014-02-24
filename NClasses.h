@@ -232,7 +232,7 @@ class NFitPartialMCToData{
       
       RooRealVar fsig("fsig","signal fraction",0.5,0.,1.) ;
       
-      // model(x) = fsig*MC2_in(x) + (1-fsig)*MC1_in(x)
+      model(x) = fsig*MC2_in(x) + (1-fsig)*MC1_in(x)
       
       RooAddPdf model("model","model",RooArgList(PDFMC2_in,PDFMC1_in),fsig) ;
 

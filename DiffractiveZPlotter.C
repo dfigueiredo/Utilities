@@ -1,15 +1,16 @@
 /*
-
 Program: Diffractive Z Plotter
 Goal: Create histograms.
 Project: Diffractive Z Analysis
-Created: 18th July, 2013.
 
-How to Execute:
+>> H O W   T O   E X E C U T E :
+--------------------------------
 
 > root -l DiffractiveZPlotter.C
 
-Version: v0.1
+
+>> A N A L Y S I S   C U T S
+----------------------------
 
 without_cuts-> No Trigger
 with_trigger-> Trigger
@@ -25,41 +26,79 @@ GapHFMinusAndCastor->Step7 + (EtaMinPf > -3 && CastorGap);
 GapHFPlusAndCastorActivity
 GapHFPlusAndCastorActivityZKinNegative
 GapHFMinusAndCastorZKinPositive
+
  */
 
 #include <iostream>
 #include <fstream>
+#ifndef __CINT__
+#include "RooGlobalFunc.h"
+#endif
+#include "RooRealVar.h"
+#include "RooDataSet.h"
+#include "RooGaussian.h"
+#include "RooChebychev.h"
+#include "RooAddPdf.h"
+#include "RooExtendPdf.h"
+#include "TCanvas.h"
+#include "TAxis.h"
+#include "RooPlot.h"
+
+using namespace RooFit;
 
 void DiffractiveZPlotter(){
 
+  StyleNice();
+
   //PlotterFour("muon");
-  //RunAll("histo_Electron_Reco.root","log","auto","electron", "TH1");
-  //MakePlot("xiPF_single_step7","xiPF_single_step7","log","auto","muon",0,"TH1"); //always 0!
-  //MakePlot("CastorMultiplicityAfter_single_step7","CastorMultiplicity_single_step7","nolog","auto","muon",0,"TH1"); //always 0!
-  //MakePlot("CastorMultiplicityBefore_single_step7","CastorMultiplicity_single_step7","nolog","auto","muon",0,"TH1"); //always 0!
-  //MakePlot("SectorVsTotalCastorEnergyAfter_single_step7","SectorVsTotalCastorEnergy_single_step7","nolog","auto","muon",0,"TH2"); //always 0!
-
-  //MakePlot("SectorVsTotalCastorEnergy_single_step7","SectorVsTotalCastorEnergy_single_step7","nolog","auto","muon",0,"TH1"); //always 0!
-
-
+  //RunAll("histo_Electron_Reco.root");
   //PlotCalorimeter("muon");
   //PlotterDivide("muon","RunNumberHighCastorAfter_single_step7","RunNumber_singleAfter_single_step7");
 
-  //MakeAllKinematics("step7");
-  //MakeAllKinematics("GapHFMinus");
-  //MakeAllKinematics("GapHFMinusAndCastor");
-  //MakeAllKinematics("GapHFMinusAndCastorZKinPositive");
-  //MakeXiAll("muon");
-  MakeXi("xiPF_single_step7","xiPF_single_step7","log","auto","muon",0,"TH1",0.05); //always 0!
-  MakeXi("xiPF_single_GapHFMinus","xiPF_single_step7","log","auto","muon",0,"TH1",0.05); //always 0!
-  MakeXi("xiPF_single_GapHFMinusAndCastor","xiPF_single_step7","log","auto","muon",0,"TH1",0.05); //always 0!
+  // Diffraction Plots 
+  //------------------
+
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTOR","Diffraction/xiMinusPF_single_NGapCASTOR","noauto","z","width","#frac{d#sigma}{d#xi}_{-}","norebin","noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","width","#frac{d#sigma}{d#xi}_{-}","norebin","noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/etasigned_single_NGapCASTORAndZKinP","Diffraction/etasigned_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","width","#frac{d#sigma}{d#xi}_{-}","norebin","noratio","all");//always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all");//always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCMSAndZKinP","Diffraction/xiMinusPF_single_NGapCMSAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_step7","Diffraction/xiMinusPF_single_step7","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/maxetagap_single_step7","Diffraction/maxetagap_single_step7","noauto","z","nowidth","","norebin","noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/maxetagap_single_NGapCMS","Diffraction/maxetagap_single_NGapCMS","noauto","z","nowidth","","norebin","noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/maxetagap_single_NGapCASTORAndZKinP","Diffraction/maxetagap_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","noratio","all"); //always 0!
+
+  // Detector Plots
+  //---------------
+
+  //MakePlotRatio("Detector/TracksLow_single_NGapCASTORAndZKinP","Detector/TracksLow_single_NGapCASTORAndZKinP","noauto","z","nowidth","","rebin","noratio","all"); //always 0!
+  //MakePlotRatio("Detector/TracksLow_single_NGapCASTOR","Detector/TracksLow_single_NGapCASTOR","noauto","z","nowidth","","rebin","noratio","all"); //always 0!
+  //MakePlotRatio("Detector/TracksLow_single_step7","Detector/TracksLow_single_step7","noauto","z","nowidth","","rebin","noratio","all"); //always 0!
+  //MakePlotRatio("Detector/TracksLow_single_NGapCMS","Detector/TracksLow_single_NGapCMS","noauto","z","nowidth","","rebin","ratio","all"); //always 0!
+  //MakePlotRatio("Detector/sumEEEminus_single_NGapCASTORAndZKinP","Detector/sumEEEminus_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","noratio","all"); //always 0!
+  //MakePlotRatio("Detector/sumEEEminus_single_step7","Detector/sumEEEminus_single_step7","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("Detector/sumEEEminus_single_NGapCMSAndZKinP","Detector/sumEEEminus_single_NGapCMSAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("Detector/sumEEEminus_single_NGapCASTORAndZKinP","Detector/sumEEEminus_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+
+  // Kinematics Plots
+  //-----------------
+
+  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_step7","LeptonsKinematics/BosonZEta_single_step7","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTOR","LeptonsKinematics/BosonZEta_single_NGapCASTOR","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+
+  DGlobalFit("GoldenZ");
 
 }
 
-//
-// RunAll: to create a list file with all *.root objects
-//
-void RunAll(TString filename, TString logOpt, TString autonorma, TString type, TString th){
+
+// M A K E   A   L I S T   O F   H I S T O G R A M S
+//--------------------------------------------------
+
+
+void RunAll(TString filename){
 
   std::ofstream outstring("ListOfHistograms.txt");
 
@@ -98,7 +137,6 @@ void RunAll(TString filename, TString logOpt, TString autonorma, TString type, T
     if (h->GetEntries() != 0){ // Defense
       if(obj->IsA()->InheritsFrom("TH1")){
 	hName1=h->GetName();
-	//MakePlot(hName1,hName1,logOpt,autonorma,type,0,th);
       }
     }
 
@@ -109,583 +147,10 @@ void RunAll(TString filename, TString logOpt, TString autonorma, TString type, T
 }
 
 
-//
-// MakeAllKinematics: create kinematics plots for Z for a given cut
-//
-void MakeAllKinematics(TString complement){
 
-  gStyle->SetOptStat("em");
+// P L O T   C A L O R I M E T E R
+//--------------------------------
 
-  TLegend* leg_electron = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
-  TLegend* leg_muon = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
-  TString legdata, legmc1_e, legmc2_e, legmc1_m, legmc2_m;
-
-  TCanvas *c1 = new TCanvas(complement,complement,2000,1200);
-  c1->Divide(4,2);
-
-  TFile *l1e  = TFile::Open("histo_Electron_Reco.root");
-  TFile *l2e  = TFile::Open("histo_DyToEE_Reco.root");
-  TFile *l3e  = TFile::Open("histo_Pompyt_electron_Reco.root");
-
-  TFile *l1m  = TFile::Open("histo_Muon_Reco.root");
-  TFile *l2m  = TFile::Open("histo_DyToMuMu_Reco.root");
-  TFile *l3m  = TFile::Open("histo_Pompyt_muon_Reco.root");
-
-  legdata = "2010 data";
-  legmc1_e = "Pythia6, DY to e^{+}e^{-}";
-  legmc2_e = "Pompyt, Z to e^{+}e^{-}";
-  legmc1_m = "Pythia6, DY to #mu^{+}#mu^{-}";
-  legmc2_m = "Pompyt, Z to #mu^{+}#mu^{-}";
-
-  TString name_e1 = "DiElectronMass_single_" + complement;
-  TString name_e2 = "DiElectronEta_single_" + complement;
-  TString name_e3 = "DiElectronPhi_single_" + complement;
-  TString name_e4 = "DiElectronPt_single_" + complement;
-
-  vector<TString> histoname_e;
-  histoname_e.push_back(name_e1);
-  histoname_e.push_back(name_e2);
-  histoname_e.push_back(name_e3);
-  histoname_e.push_back(name_e4);
-
-  double weight1_e = 0.;
-  double weight2_e = 0.;
-  double weight3_e = 0.;
-  double ratio1_e = 0.;
-  double ratio2_e = 0.;
-    
-  TH1F* h_1ew = (TH1F*)l1e->Get("DiElectronMass_single_step7");
-  TH1F* h_2ew = (TH1F*)l2e->Get("DiElectronMass_single_step7");
-  TH1F* h_3ew = (TH1F*)l3e->Get("DiElectronMass_single_step7");
-    
-  weight1_e = 1./h_1ew->GetEntries();
-  weight2_e = 1./h_2ew->GetEntries();
-  weight3_e = 1./h_3ew->GetEntries();
-    
-  ratio1_e = weight2_e/weight1_e;
-  ratio2_e = weight3_e/weight1_e;
-    
-  for (unsigned i=0; i<histoname_e.size(); i++){
-
-    cout << histoname_e[i] << endl;
-    TH1F* h_1e = (TH1F*)l1e->Get(histoname_e.at(i));
-    TH1F* h_2e = (TH1F*)l2e->Get(histoname_e.at(i));
-    TH1F* h_3e = (TH1F*)l3e->Get(histoname_e.at(i));
-
-    h_1e->SetLineColor(kBlack);
-    h_1e->SetMarkerStyle(20);
-    h_1e->SetMarkerSize(0.8);
-    h_1e->GetYaxis()->SetTitle("N Events");
-    if(i==0)leg_electron->AddEntry(h_1e,legdata,"p");
-
-    h_2e->SetLineColor(kRed);
-    h_2e->SetLineWidth(2);
-    h_2e->Scale(ratio1_e);
-    h_2e->SetFillColor(kRed-4);
-    h_2e->SetFillStyle(3020);
-    h_2e->GetYaxis()->SetTitle("N Events");
-    if(i==0)leg_electron->AddEntry(h_2e,legmc1_e,"LFP");
-
-    h_3e->SetLineColor(kBlue);
-    h_3e->SetLineWidth(2);
-    h_3e->Scale(0.05*ratio2_e);
-    h_3e->SetFillColor(kBlue-4);
-    h_3e->SetFillStyle(3020);
-    h_3e->GetYaxis()->SetTitle("N Events");
-    if(i==0)leg_electron->AddEntry(h_3e,legmc2_e,"LFP");
-
-    c1->cd(i+1);
-    h_1e->Draw("ep");
-    h_2e->Draw("histosame");
-    h_3e->Draw("histosame");
-
-    leg_electron->Draw("histosames");
-
-  }
-
-  TString name_m1 = "DiMuonMass_single_" + complement;
-  TString name_m2 = "DiMuonEta_single_" + complement;
-  TString name_m3 = "DiMuonPhi_single_" + complement;
-  TString name_m4 = "DiMuonPt_single_" + complement;
-
-  vector<TString> histoname_m;
-  histoname_m.push_back(name_m1);
-  histoname_m.push_back(name_m2);
-  histoname_m.push_back(name_m3);
-  histoname_m.push_back(name_m4);
-    
-  double weight1_m = 0.;
-  double weight2_m = 0.;
-  double weight3_m = 0.;
-  double ratio1_m = 0.;
-  double ratio2_m = 0.;
-    
-  TH1F* h_1mw = (TH1F*)l1e->Get("DiMuonMass_single_step7");
-  TH1F* h_2mw = (TH1F*)l2e->Get("DiMuonMass_single_step7");
-  TH1F* h_3mw = (TH1F*)l3e->Get("DiMuonMass_single_step7");
-    
-  weight1_m = 1./h_1mw->GetEntries();
-  weight2_m = 1./h_2mw->GetEntries();
-  weight3_m = 1./h_3mw->GetEntries();
-    
-  ratio1_m = weight2_m/weight1_m;
-  ratio2_m = weight3_m/weight1_m;
-
-  for (unsigned i=0; i<histoname_m.size(); i++){
-
-    cout << histoname_m[i] << endl;
-    TH1F* h_1m = (TH1F*)l1m->Get(histoname_m[i]);
-    TH1F* h_2m = (TH1F*)l2m->Get(histoname_m[i]);
-    TH1F* h_3m = (TH1F*)l3m->Get(histoname_m[i]);
-
-    h_1m->SetLineColor(kBlack);
-    h_1m->SetMarkerStyle(20);
-    h_1m->SetMarkerSize(0.8);
-    h_1m->GetYaxis()->SetTitle("N Events");
-    if(i==0)leg_muon->AddEntry(h_1m,legdata,"p");
-
-    h_2m->SetLineColor(kRed);
-    h_2m->SetLineWidth(2);
-    h_2m->Scale(ratio1_m);
-    h_2m->SetFillColor(kRed-4);
-    h_2m->SetFillStyle(3020);
-    h_2m->GetYaxis()->SetTitle("N Events");
-    if(i==0)leg_muon->AddEntry(h_2m,legmc1_m,"LFP");
-
-    h_3m->SetLineColor(kBlue);
-    h_3m->SetLineWidth(2);
-    h_3m->Scale(0.05*ratio2_m);
-    h_3m->SetFillColor(kBlue-4);
-    h_3m->SetFillStyle(3020);
-    h_3m->GetYaxis()->SetTitle("N Events");
-    if(i==0)leg_muon->AddEntry(h_3m,legmc2_m,"LFP");
-
-    c1->cd(i+5);
-    h_1m->Draw("ep");
-    h_2m->Draw("histosame");
-    h_3m->Draw("histosame");
-
-    leg_muon->Draw("histosames");
-
-  }
-    
-}
-
-//
-// Make a single plot with Fit
-//
-void MakeXi(TString name1,TString name2, TString logscale, TString AutoNorma, TString type, bool destructor, TString th, double per){
-    
-    TCanvas *c1 = new TCanvas(name1,name1);
-    c1->Divide(1,2);
-    c1->cd(1);
-    
-    //gStyle->SetOptStat(0);
-    
-    TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
-    TString legdata, legmc1, legmc2;
-    
-    if (type == "muon" || type == "Muon" || type == "MUON"){
-        TFile *l1  = TFile::Open("histo_Muon_Reco.root");
-        TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
-        TFile *l3  = TFile::Open("histo_Pompyt_muon_Reco.root");
-        legdata = "2010 data";
-        legmc1 = "Pythia6, DY to #mu^{+}#mu^{-}";
-        legmc2 = "Pompyt, Z to #mu^{+}#mu^{-}";
-    }
-    else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
-        TFile *l1  = TFile::Open("histo_Electron_Reco.root");
-        TFile *l2  = TFile::Open("histo_DyToEE_Reco.root");
-        TFile *l3  = TFile::Open("histo_Pompyt_electron_Reco.root");
-        legdata = "2010 data";
-        legmc1 = "Pythia6, DY to e^{+}e^{-}";
-        legmc2 = "Pompyt, Z to e^{+}e^{-}";
-    }
-    else {
-        std::cout << "Please, put correct option." << std::endl;
-        exit(0);
-    }
-    
-    double weight1 = 0.;
-    double weight2 = 0.;
-    double weight3 = 0.;
-    double ratio1 = 0.;
-    double ratio2 = 0.;
-    
-    if(logscale == "log" || logscale == "LOG" || logscale == "Log") {
-       c1->SetLogx(1);
-    }
-    
-    if (th=="TH1"){
-        TH1F* h_1 = (TH1F*)l1->Get(name1);
-        TH1F* h_2 = (TH1F*)l2->Get(name2);
-        TH1F* h_3 = (TH1F*)l3->Get(name2);
-    }
-    else if (th=="TH2"){
-        TH2F* h_1 = (TH2F*)l1->Get(name1);
-        TH2F* h_2 = (TH2F*)l2->Get(name2);
-        TH3F* h_3 = (TH1F*)l3->Get(name2);
-    }
-    
-    TH1F* h_1w = (TH1F*)l1->Get("xiPF_single_step7");
-    TH1F* h_2w = (TH1F*)l2->Get("xiPF_single_step7");
-    TH1F* h_3w = (TH1F*)l3->Get("xiPF_single_step7");
-    
-    if(AutoNorma == "Auto" || AutoNorma == "AUTO" || AutoNorma == "auto") {
-        weight1 = 1./h_1w->GetEntries();
-        weight2 = 1./h_2w->GetEntries();
-        weight3 = 1./h_3w->GetEntries();
-        
-        ratio1 = weight2/weight1;
-        ratio2 = weight3/weight1;
-    }
-    else {
-        weight1 = 1.;
-        weight2 = 1.;
-        weight3 = 1.;
-    }
-    
-    h_1->SetLineColor(kBlack);
-    h_1->SetMarkerStyle(20);
-    h_1->SetMarkerSize(0.8);
-    h_1->GetYaxis()->SetTitle("N Events");
-    leg->AddEntry(h_1,legdata,"p");
-    
-    h_2->SetLineColor(kRed);
-    h_2->SetLineWidth(2);
-    h_2->Scale(ratio1);
-    h_2->SetFillColor(kRed-4);
-    h_2->SetFillStyle(3020);
-    h_2->GetYaxis()->SetTitle("N Events");
-    leg->AddEntry(h_2,legmc1,"LFP");
-    
-    h_3->SetLineColor(kBlue);
-    h_3->SetLineWidth(2);
-    h_3->Scale(per*ratio2);
-    h_3->SetFillColor(kBlue-4);
-    h_3->SetFillStyle(3020);
-    h_3->GetYaxis()->SetTitle("N Events");
-    leg->AddEntry(h_3,legmc2,"LFP");
-    
-    h_1->Draw("ep");
-    h_2->Draw("histosame");
-    h_3->Draw("histosame");
-    leg->Draw("histosames");
-    
-    c1->cd(2);
-    NFitMCToData(h_1,h_2,h_3);
-    
-    c1->Update();
-    c1->SaveAs(name1+TString(".png"));
-    c1->SaveAs(name1+TString(".C"));
-    
-    if (destructor){
-        delete c1;
-        delete h_1;
-        delete h_2;
-        delete leg;
-    }
-    
-}
-
-//
-// MakeXi Plot: create Xi plots for Z.
-//
-void MakeXiAll(TString type){
-    
-    gStyle->SetOptStat("em");
-    
-    TCanvas *c1 = new TCanvas("xiAllGapPlus","xiAllGapPlus",2000,400);
-    c1->Divide(4,1);
-    
-    TCanvas *c2 = new TCanvas("xiAllGapMinus","xiAllGapMinus",2000,400);
-    c2->Divide(4,1);
-    
-    TCanvas *c3 = new TCanvas("xiPlusGapMinus","xiPlusGapMinus",2000,400);
-    c3->Divide(4,1);
-    
-    TCanvas *c4 = new TCanvas("xiPlusGapPlus","xiPlusGapPlus",2000,400);
-    c4->Divide(4,1);
-    
-    TCanvas *c5 = new TCanvas("xiMinusGapMinus","xiMinusGapMinus",2000,400);
-    c5->Divide(4,1);
-    
-    TCanvas *c6 = new TCanvas("xiMinusGapPlus","xiMinusGapPlus",2000,400);
-    c6->Divide(4,1);
-    
-    gPad->SetLogx();
-    gPad->SetLogy();
-
-    TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
-    TString legdata, legmc1, legmc2;
-    
-    if (type == "muon" || type == "Muon" || type == "MUON"){
-        TFile *l1  = TFile::Open("histo_Muon_Reco.root");
-        TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
-        TFile *l3  = TFile::Open("histo_Pompyt_muon_Reco.root");
-        legdata = "2010 data";
-        legmc1 = "Pythia6, DY to #mu^{+}#mu^{-}";
-        legmc2 = "Pompyt, Z to #mu^{+}#mu^{-}";
-    }
-    else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
-        TFile *l1  = TFile::Open("histo_Electron_Reco.root");
-        TFile *l2  = TFile::Open("histo_DyToEE_Reco.root");
-        TFile *l3  = TFile::Open("histo_Pompyt_electron_Reco.root");
-        legdata = "2010 data";
-        legmc1 = "Pythia6, DY to e^{+}e^{-}";
-        legmc2 = "Pompyt, Z to e^{+}e^{-}";
-    }
-    else {
-        std::cout << "Please, put correct option." << std::endl;
-        exit(0);
-    }
-    
-    TString name_xi1 = "xiPF_single_step7";
-    TString name_xi2 = "xiPF_single_GapHFMinus";
-    TString name_xi3 = "xiPF_single_GapHFMinusAndCastor";
-    TString name_xi4 = "xiPF_single_GapHFMinusAndCastorZKinPositive";
-    
-    TString name_xi5 = "xiPF_single_step7";
-    TString name_xi6 = "xiPF_single_GapHFPlus";
-    TString name_xi7 = "xiPF_single_GapHFPlusAndCastorActivity";
-    TString name_xi8 = "xiPF_single_GapHFPlusAndCastorActivityZKinNegative";
-    
-    TString name_xi9 = "xiPlusPF_single_step7";
-    TString name_xi10 = "xiPlusPF_single_GapHFMinus";
-    TString name_xi11 = "xiPlusPF_single_GapHFMinusAndCastor";
-    TString name_xi12 = "xiPlusPF_single_GapHFMinusAndCastorZKinPositive";
-    
-    TString name_xi13 = "xiPlusPF_single_step7";
-    TString name_xi14 = "xiPlusPF_single_GapHFPlus";
-    TString name_xi15 = "xiPlusPF_single_GapHFPlusAndCastorActivity";
-    TString name_xi16 = "xiPlusPF_single_GapHFPlusAndCastorActivityZKinNegative";
-    
-    TString name_xi17 = "xiMinusPF_single_step7";
-    TString name_xi18 = "xiMinusPF_single_GapHFMinus";
-    TString name_xi19 = "xiMinusPF_single_GapHFMinusAndCastor";
-    TString name_xi20 = "xiMinusPF_single_GapHFMinusAndCastorZKinPositive";
-    
-    TString name_xi21 = "xiMinusPF_single_step7";
-    TString name_xi22 = "xiMinusPF_single_GapHFPlus";
-    TString name_xi23 = "xiMinusPF_single_GapHFPlusAndCastorActivity";
-    TString name_xi24 = "xiMinusPF_single_GapHFPlusAndCastorActivityZKinNegative";
-    
-    vector<TString> histoname_xi;
-    histoname_xi.push_back(name_xi1);
-    histoname_xi.push_back(name_xi2);
-    histoname_xi.push_back(name_xi3);
-    histoname_xi.push_back(name_xi4);
-    histoname_xi.push_back(name_xi5);
-    histoname_xi.push_back(name_xi6);
-    histoname_xi.push_back(name_xi7);
-    histoname_xi.push_back(name_xi8);
-    histoname_xi.push_back(name_xi9);
-    histoname_xi.push_back(name_xi10);
-    histoname_xi.push_back(name_xi11);
-    histoname_xi.push_back(name_xi12);
-    histoname_xi.push_back(name_xi13);
-    histoname_xi.push_back(name_xi14);
-    histoname_xi.push_back(name_xi15);
-    histoname_xi.push_back(name_xi16);
-    histoname_xi.push_back(name_xi17);
-    histoname_xi.push_back(name_xi18);
-    histoname_xi.push_back(name_xi19);
-    histoname_xi.push_back(name_xi20);
-    histoname_xi.push_back(name_xi21);
-    histoname_xi.push_back(name_xi22);
-    histoname_xi.push_back(name_xi23);
-    histoname_xi.push_back(name_xi24);
-    
-    double weight1 = 0.;
-    double weight2 = 0.;
-    double weight3 = 0.;
-    double ratio1 = 0.;
-    double ratio2 = 0.;
-
-    TH1F* h_1w = (TH1F*)l1->Get("xiPF_single_step7");
-    TH1F* h_2w = (TH1F*)l2->Get("xiPF_single_step7");
-    TH1F* h_3w = (TH1F*)l3->Get("xiPF_single_step7");
-    
-    weight1 = 1./h_1w->GetEntries();
-    weight2 = 1./h_2w->GetEntries();
-    weight3 = 1./h_3w->GetEntries();
-    
-    ratio1 = weight2/weight1;
-    ratio2 = weight3/weight1;
-    
-    double xi_bin[9]={0.0003,0.002,0.0045,0.01,0.02,0.04,0.06,0.08,0.1};
-    
-    for (unsigned i=0; i<histoname_xi.size(); i++){
-        
-        /*
-        TH1F* h_1new = (TH1F*)l1->Get(histoname_xi[i]);
-        TH1F* h_2new = (TH1F*)l2->Get(histoname_xi[i]);
-        TH1F* h_3new = (TH1F*)l3->Get(histoname_xi[i]);
-
-        h_1new->Rebin(8,"h_1xi",xi_bin);
-        h_2new->Rebin(8,"h_2xi",xi_bin);
-        h_3new->Rebin(8,"h_3xi",xi_bin);
-        */
-        
-        TH1F* h_1xi= (TH1F*)l1->Get(histoname_xi[i]);
-        TH1F* h_2xi = (TH1F*)l2->Get(histoname_xi[i]);
-        TH1F* h_3xi = (TH1F*)l3->Get(histoname_xi[i]);
-        
-        h_1xi->SetLineColor(kBlack);
-        h_1xi->SetMarkerStyle(20);
-        h_1xi->SetMarkerSize(0.8);
-        h_1xi->GetYaxis()->SetTitle("N Events");
-        if (i==0) leg->AddEntry(h_1xi,legdata,"p");
-        
-        h_2xi->SetLineColor(kRed);
-        h_2xi->SetLineWidth(2);
-        h_2xi->Scale(ratio1);
-        h_2xi->SetFillColor(kRed-4);
-        h_2xi->SetFillStyle(3020);
-        h_2xi->GetYaxis()->SetTitle("N Events");
-        if(i==0)leg->AddEntry(h_2xi,legmc1,"LFP");
-        
-        h_3xi->SetLineColor(kBlue);
-        h_3xi->SetLineWidth(2);
-        h_3xi->Scale(ratio2);
-        h_3xi->SetFillColor(kBlue-4);
-        h_3xi->SetFillStyle(3020);
-        h_3xi->GetYaxis()->SetTitle("N Events");
-        if(i==0)leg->AddEntry(h_3xi,legmc2,"LFP");
-        
-        if (i>=0 && i<=3) c1->cd(i+1);
-        if (i>=4 && i<=7) c2->cd(i-3);
-        if (i>=8 && i<=11) c3->cd(i-7);
-        if (i>=12 && i<=15) c4->cd(i-11);
-        if (i>=16 && i<=19) c5->cd(i-15);
-        if (i>=20 && i<=23) c6->cd(i-19);
-        
-        h_1xi->Draw("ep");
-        h_2xi->Draw("histosame");
-        h_3xi->Draw("histosame");
-        
-        //NFitMCToData(h_1xi,h_2xi,h_3xi);
-        
-        leg->Draw("histosames");
-        
-    }
-    
-}
-
-//
-// Make a single plot with Fit
-//
-void MakePlot(TString name1,TString name2, TString logscale, TString AutoNorma, TString type, bool destructor, TString th){
-
-  TCanvas *c1 = new TCanvas(name1,name1);
-  c1->Divide(1,2);
-  c1->cd(1);   
-
-  //gStyle->SetOptStat(0);
-
-  TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
-  TString legdata, legmc1, legmc2;
-
-  if (type == "muon" || type == "Muon" || type == "MUON"){
-    TFile *l1  = TFile::Open("histo_Muon_Reco.root");
-    TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
-    TFile *l3  = TFile::Open("histo_Pompyt_muon_Reco.root");
-    legdata = "2010 data";
-    legmc1 = "Pythia6, DY to #mu^{+}#mu^{-}";
-    legmc2 = "Pompyt, Z to #mu^{+}#mu^{-}";
-  }
-  else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
-    TFile *l1  = TFile::Open("histo_Electron_Reco.root");
-    TFile *l2  = TFile::Open("histo_DyToEE_Reco.root");
-    TFile *l3  = TFile::Open("histo_Pompyt_electron_Reco.root");
-    legdata = "2010 data";
-    legmc1 = "Pythia6, DY to e^{+}e^{-}";  
-    legmc2 = "Pompyt, Z to e^{+}e^{-}"; 
-  }
-  else {
-    std::cout << "Please, put correct option." << std::endl;
-    exit(0);
-  }
-
-  double weight1 = 0.;
-  double weight2 = 0.;
-  double weight3 = 0.;
-  double ratio1 = 0.;
-  double ratio2 = 0.;
-
-  if(logscale == "log" || logscale == "LOG" || logscale == "Log") c1->SetLogy(1);
-
-  if (th=="TH1"){
-    TH1F* h_1 = (TH1F*)l1->Get(name1);
-    TH1F* h_2 = (TH1F*)l2->Get(name2);
-    TH1F* h_3 = (TH1F*)l3->Get(name2);
-  }
-  else if (th=="TH2"){
-    TH2F* h_1 = (TH2F*)l1->Get(name1);
-    TH2F* h_2 = (TH2F*)l2->Get(name2);
-    TH3F* h_3 = (TH1F*)l3->Get(name2);
-  }
-
-  if(AutoNorma == "Auto" || AutoNorma == "AUTO" || AutoNorma == "auto") {
-    weight1 = 1./h_1->GetEntries();
-    weight2 = 1./h_2->GetEntries();
-    weight3 = 1./h_3->GetEntries();
-
-    ratio1 = weight2/weight1;
-    ratio2 = weight3/weight1;
-  }
-  else {
-    weight1 = 1.;
-    weight2 = 1.;
-    weight3 = 1.;
-  }
-
-  h_1->SetLineColor(kBlack);
-  h_1->SetMarkerStyle(20);
-  h_1->SetMarkerSize(0.8);
-  h_1->GetYaxis()->SetTitle("N Events");
-  leg->AddEntry(h_1,legdata,"p");
-
-  h_2->SetLineColor(kRed);
-  h_2->SetLineWidth(2);
-  h_2->Scale(ratio1);
-  h_2->SetFillColor(kRed-4);
-  h_2->SetFillStyle(3020);
-  h_2->GetYaxis()->SetTitle("N Events");
-  leg->AddEntry(h_2,legmc1,"LFP");
-
-  h_3->SetLineColor(kBlue);
-  h_3->SetLineWidth(2);
-  h_3->Scale(ratio2);
-  h_3->SetFillColor(kBlue-4);
-  h_3->SetFillStyle(3020);
-  h_3->GetYaxis()->SetTitle("N Events");
-  leg->AddEntry(h_3,legmc2,"LFP");
-
-  h_1->Draw("ep");
-  h_2->Draw("histosame");
-  h_3->Draw("histosame");
-  leg->Draw("histosames");
-
-  c1->cd(2);
-  NFitMCToData(h_1,h_2,h_3);
-
-  c1->Update();
-  c1->SaveAs(name1+TString(".png"));
-  c1->SaveAs(name1+TString(".C"));
-
-  if (destructor){
-    delete c1;
-    delete h_1;
-    delete h_2;
-    delete leg;
-  }
-
-}
-
-//
-// Plot all calorimeter information
-//
 void PlotCalorimeter(TString type){
 
 
@@ -746,9 +211,10 @@ void PlotCalorimeter(TString type){
 
 }
 
-//
-// Plot distribution for each vertex
-//
+
+// P L O T   E A C H   V E R T E X   D I S T R I B U T I O N
+//----------------------------------------------------------
+
 void PlotterFour(TString type){
 
   gStyle->SetOptStat(0);
@@ -775,31 +241,24 @@ void PlotterFour(TString type){
   TH1D* h_3 = (TH1D*)l3->Get("CastorMultiplicity_single_step7");
   TH1D* h_4 = (TH1D*)l4->Get("CastorMultiplicity_single_step7");
 
-  /*
-     h_1->Scale(1./h_1->GetBinContent(16));
-     h_2->Scale(1./h_2->GetBinContent(16));
-     h_3->Scale(1./h_3->GetBinContent(16));
-     h_4->Scale(1./h_4->GetBinContent(16));
-   */
-
   cout << "Integral H1: " << h_1->Integral(0,16) << endl;
   N2H1DSameArea(h_1,h_3);
   h_3->Scale(1./2.);
   TH1D* h1_sub = h_1->Clone(); 
   h1_sub->Add(h_3,-1);
 
-  //N2HSameMax(h_1,h_2);
-  //N2HSameMax(h_1,h_3);
-  //N2HSameMax(h_1,h_4);
-
+  // Plot three histograms
   plotHists(h_1,h1_sub,h_3,"Castor Multiplicity","Castor Multiplicity","NEvents","H1","H1_sub","H2",0);
+
+  // Plot four histograms
   //plotHists(h_1,h_2,h_3,h_4,"Castor Multiplicity","Castor Multiplicity","NEvents","Data, Vertex 1","Data, Vertex 2","Data, Vertex 3","Data, Vertex 4",0);
 
 }
 
-//
-// Compute Fractions of DeltaEta
-//
+
+// C O M P U T E   F R A C T I O N S   C A S T O R
+//------------------------------------------------
+
 void PlotterDivide(TString type,TString name,TString name2){
 
   TCanvas *c1 = new TCanvas("frac","frac",1000,1000);
@@ -825,16 +284,9 @@ void PlotterDivide(TString type,TString name,TString name2){
   TH1D* h_fraction2 = new TH1D("hp2","Normal histogram",20,0,1);
   TH1D* h_fraction3 = new TH1D("hp3","Normal histogram",20,0,1);
 
-
-  //h_1->Sumw2();
-  //h_1D->Sumw2();
-
-  //gStyle->SetLabelSize(10., "X"); 
-
   int j;
   double fraction;
   for (j=1; j<=h_1->GetNbinsX(); j++){
-    //cout << j << endl;
     if (h_1->GetBinContent(j) > 0){
       fraction = h_1->GetBinContent(j)*1./h_1D->GetBinContent(j)*1.;
       cout << "Bin Content, High: " << h_1->GetBinContent(j) << endl;
@@ -862,12 +314,12 @@ void PlotterDivide(TString type,TString name,TString name2){
   c1->cd(4);
   h_fraction3->Draw();
 
-
 }
 
-//
-// Style
-//
+
+// S T Y L E    C O S M E T I C S
+//-------------------------------
+
 void TH1Draw(TH1F* h_1, TH1F* h_2, TH1F* h_3){
 
   h_1->SetLineColor(kBlack);
@@ -889,5 +341,488 @@ void TH1Draw(TH1F* h_1, TH1F* h_2, TH1F* h_3){
 
 }
 
+//  S T Y L E   C O S M E T I C S
+//-------------------------------
+
+void format_h(TH1F* h, int linecolor){
+  h->SetLineWidth(3);
+  h->SetLineColor(linecolor);
+}
+
+// P L O T T E R    D I F F R A C T I V E   Z
+//-------------------------------------------
+
+void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString type, TString diff, TString ytitle, TString rebinopt, TString mode, TString SumHisto){
+
+  TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
+  TString legdata, legmc1, legmc2, legboth;
+
+  leg->SetFillColor(kWhite);
+
+  if (type == "muon" || type == "Muon" || type == "MUON"){
+    TFile *l1  = TFile::Open("histo_Muon_Reco.root");
+    TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
+    TFile *l3  = TFile::Open("histo_Pompyt_muon_Reco.root");
+    legdata = "2010 data";
+    legmc1 = "Pythia6, DY to #mu^{+}#mu^{-}";
+    legmc2 = "Pompyt, Z to #mu^{+}#mu^{-}";
+  }
+  else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
+    TFile *l1  = TFile::Open("histo_Electron_Reco.root");
+    TFile *l2  = TFile::Open("histo_DyToEE_Reco.root");
+    TFile *l3  = TFile::Open("histo_Pompyt_electron_Reco.root");
+    legdata = "2010 data";
+    legmc1 = "Pythia6, DY to e^{+}e^{-}";
+    legmc2 = "Pompyt, Z to e^{+}e^{-}";
+  }else if (type == "Z" || type == "z"){
+    TFile *l1  = TFile::Open("histo_Z_Reco.root");
+    TFile *l2  = TFile::Open("histo_DY_Reco.root");
+    TFile *l3  = TFile::Open("histo_Pompyt_Reco.root"); 
+    legdata = "2010 data";
+    legmc1 = "Pythia6, DY";
+    legmc2 = "Pompyt*0.05, Z";
+    legboth = "Pythia6 + Pompyt*0.05";
+  }
+  else {
+    std::cout << "Please, put correct option." << std::endl;
+    exit(0);
+  }
+
+  TH1F* h_1 = (TH1F*)l1->Get(name1);
+  TH1F* h_2 = (TH1F*)l2->Get(name2);
+  TH1F* h_3 = (TH1F*)l3->Get(name2);
+
+  if(AutoNorma == "Auto" || AutoNorma == "AUTO" || AutoNorma == "auto") {
+    NEntriesNorma(h_1,h_2,h_3);
+  }
+
+  h_1->Sumw2();
+  h_2->Sumw2();
+  h_3->Sumw2();
 
 
+  if(diff == "width" || diff == "WIDTH"){
+    double lumi = 0.07341; // 1.Bin_i/29.08 + Bin_i/25.61 (full data luminosity each period)
+    h_1->Scale(lumi,"width");
+    h_2->Scale(lumi,"width");
+    h_3->Scale(lumi,"width");
+    h_1->GetYaxis()->SetTitle(ytitle);
+    h_2->GetYaxis()->SetTitle(ytitle);
+    h_3->GetYaxis()->SetTitle(ytitle);
+  }else{
+    h_1->GetYaxis()->SetTitle("N Events");
+    h_2->GetYaxis()->SetTitle("N Events");
+    h_3->GetYaxis()->SetTitle("N Events");
+  }
+
+  if(rebinopt == "rebin"){
+    h_1->Rebin(4);
+    h_2->Rebin(4);
+    h_3->Rebin(4);
+  }
+
+  leg->AddEntry(h_1,legdata,"p");
+  leg->AddEntry(h_2,legmc1,"LFP");
+  leg->AddEntry(h_3,legmc2,"LFP");
+
+  h_3->Scale(0.05);
+
+  h_1->SetLineColor(kBlack);
+  h_1->SetMarkerStyle(20);
+  h_1->SetMarkerSize(1.2);
+
+  h_2->SetLineColor(kRed);
+  h_2->SetLineWidth(4);
+  h_2->SetFillColor(kRed-4);
+  h_2->SetFillStyle(3020);
+
+  h_3->SetLineColor(kBlue);
+  h_3->SetLineWidth(4);
+  h_3->SetFillColor(kBlue-4);
+  h_3->SetFillStyle(3020);
+
+  TH1F* dividend=new TH1F(*h_1);
+  dividend->Divide(h_2);
+
+  TH1F* dividend2=new TH1F(*h_1);
+  dividend2->Divide(h_3);
+
+  format_h(dividend,kRed-4);
+  format_h(dividend2,kBlue-4);
+  gStyle->SetOptStat(0);
+
+  if (mode == "ratio"){
+    TCanvas* RatioCanvas= new TCanvas();
+    RatioCanvas->Divide(1,2);
+    RatioCanvas->cd(1);
+    RatioCanvas->GetPad(1)->SetRightMargin(.01);
+  }
+  else{
+    TCanvas* RatioCanvas= new TCanvas();
+    RatioCanvas->cd();
+  }
+
+  TList *listAll = new TList;
+  listAll->Add(h_2);
+  listAll->Add(h_3);
+
+  TH1F *MCtogether = (TH1F*)h_2->Clone("MCtogether");
+  MCtogether->Reset();
+  MCtogether->SetLineColor(kGreen);
+  MCtogether->Merge(listAll);
+
+  h_2->SetFillStyle(0);
+  h_3->SetFillStyle(0);
+  if (SumHisto=="all" || SumHisto == "ALL"){
+    MCtogether->SetFillStyle(0);
+    MCtogether->SetLineWidth(4);
+    MCtogether->SetFillColor(kGreen);
+    MCtogether->Draw("Hist");
+    leg->AddEntry(MCtogether,legboth,"LFP");
+  }
+  h_2->Draw("HistSame");
+  h_3->Draw("HistSame");
+  h_1->Draw("epsame");
+  leg->Draw("HistSame");
+
+  if(mode=="ratio"){
+    RatioCanvas->cd(2);
+    dividend->GetYaxis()->SetRangeUser(0,2.49);
+    RatioCanvas->GetPad(2)->SetGridy();
+    RatioCanvas->GetPad(2)->SetRightMargin(.01);
+    dividend->GetYaxis()->SetTitle("data/mc");
+    dividend->Draw();
+    dividend2->Draw("same");
+  }
+
+  DFitExtended(h_1,h_2,h_3,h_1->GetXaxis()->GetTitle(),h_1->GetXaxis()->GetXmin(),h_1->GetXaxis()->GetXmax());
+
+}
+
+// L I K E L I H O O D   F I T
+//----------------------------
+
+void DFit(TH1 *Dat, TH1 *MC1, TH1 *MC2, TString title, double x_min, double x_max)  {
+
+  RooRealVar x(title, title, x_min, x_max);  
+
+  RooDataHist Data_in("Data_in","Data_in",x,Dat);
+  RooDataHist MC1_in("MC1_in","MC1_in",x,MC1) ;
+  RooDataHist MC2_in("MC2_in","MC2_in",x,MC2) ;
+
+  RooHistPdf PDFData_in("PDFData_in", "PDFData_in", x, Data_in) ;
+  RooHistPdf PDFMC1_in("PDFMC1_in", "PDFMC1_in", x, MC1_in) ;
+  RooHistPdf PDFMC2_in("PDFMC2_in", "PDFMC2_in", x, MC2_in) ;
+
+  //POMPYT,  PYTHIA
+  RooRealVar fsig("fsig","signal fraction",0.5,0.,1.);
+  RooAddPdf model("model","model",RooArgList(PDFMC2_in,PDFMC1_in),fsig) ;
+  model.fitTo(Data_in);
+
+  // Perform fit and save result
+  RooFitResult* r = model.fitTo(Data_in,RooFit::Save()) ;
+  r->Print("fsig");
+
+  RooPlot* frame = x.frame() ;
+
+  Data_in.plotOn(frame,  RooFit::Name("Data"),RooFit::DrawOption(" ")) ; 
+  model.plotOn(frame, RooFit::Name("Fit"),RooFit::LineColor(kGreen)) ; 
+  model.paramOn(frame) ; 
+
+  model.plotOn(frame,  RooFit::Name("Pythia"), RooFit::Components(PDFMC1_in),
+      RooFit::LineColor(kRed),RooFit::LineStyle(kDotted)) ; 
+  model.plotOn(frame, RooFit::Name("Pompyt"),RooFit::Components(PDFMC2_in),
+      RooFit::LineColor(kBlue),RooFit::LineStyle(kDashed)) ; 
+
+  frame->Draw() ;
+
+  TLegend *legend = new TLegend(0.7,0.7,0.9,0.9);
+  legend->SetTextFont(72);
+  legend->SetTextSize(0.05);
+  legend->AddEntry("Data","Data","P ");
+  legend->AddEntry("Fit","Fit","L ");
+  legend->AddEntry("Pythia","Pythia","L ");
+  legend->AddEntry("Pompyt","Pompyt","L ");
+  legend->Draw();
+
+}
+
+
+// L I K E L I H O O D   E X T E N D E D   F I T
+//----------------------------------------------
+
+void DFitExtended(TH1 *Dat, TH1 *Bkg, TH1 *Sig, TString title, double x_min, double x_max){
+
+  RooRealVar x(title, title, x_min, x_max); 
+
+  // Get PDFs
+  RooDataHist data_in("data_in","data_in",x,Dat);
+  RooDataHist bkg_in("bkg_in","bkg_in",x,Bkg) ;
+  RooDataHist sig_in("sig_in","sig_in",x,Sig) ;
+
+  RooHistPdf data("PDFdata_in", "PDFdata_in", x, data_in) ;
+  RooHistPdf sig("PDFsig_in", "PDFsig_in", x, sig_in) ;
+  RooHistPdf bkg("PDFbkg_in", "PDFbkg_in", x, bkg_in) ;
+
+  /////////////////////
+  // M E T H O D   1 //
+  /////////////////////
+
+
+  // C o n s t r u c t   e x t e n d e d   c o m p o s i t e   m o d e l 
+  // -------------------------------------------------------------------
+
+  // Sum the composite signal and background into an extended pdf nsig*sig+nbkg*bkg
+  RooRealVar nsig("nsig","number of signal events",500,0.,10000);
+  RooRealVar nbkg("nbkg","number of background events",500,0,10000);
+  RooAddPdf  model("model","(g1+g2)+a",RooArgList(bkg,sig),RooArgList(nbkg,nsig)) ;
+
+  // S a m p l e ,   f i t   a n d   p l o t   e x t e n d e d   m o d e l 
+  // ---------------------------------------------------------------------
+  // = model.expectedEvents() = nsig+nbkg
+
+  // Fit model to data, extended ML term automatically included
+  model.fitTo(data_in,Extended(kTRUE)) ; 
+
+  // Plot data and PDF overlaid, use expected number of events for p.d.f projection normalization
+  // rather than observed number of events (==data->numEntries())
+  RooPlot* xframe = x.frame(Title("extended ML fit example")) ;
+  data_in.plotOn(xframe,RooFit::Name("Data")) ;
+  model.plotOn(xframe,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+
+  // Overlay the background component of model with a dashed line
+  model.plotOn(xframe,Components(bkg),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+
+  // Overlay the background+sig2 components of model with a dotted line
+  model.plotOn(xframe,Components(RooArgSet(bkg,sig)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+
+  // Print structure of composite p.d.f.
+  model.Print("t") ;
+
+  /////////////////////
+  // M E T H O D   2 //
+  /////////////////////
+
+  // C o n s t r u c t   e x t e n d e d   c o m p o n e n t s   f i r s t
+  // ---------------------------------------------------------------------
+
+  // Associated nsig/nbkg as expected number of events with sig/bkg
+  RooExtendPdf esig("esig","extended signal p.d.f",sig,nsig) ;
+  RooExtendPdf ebkg("ebkg","extended background p.d.f",bkg,nbkg) ;
+
+  // S u m   e x t e n d e d   c o m p o n e n t s   w i t h o u t   c o e f s 
+  // -------------------------------------------------------------------------
+
+  // Construct sum of two extended p.d.f. (no coefficients required)
+  RooAddPdf  model2("model2","(g1+g2)+a",RooArgList(ebkg,esig)) ;
+
+  RooFitResult* r = model2.fitTo(data_in,RooFit::Save()) ;
+  r->Print("esig");
+  r->Print("ebkg");
+  r->Print("v") ;
+
+  // Fit chi2
+  //Double_t chi2 = xframe->chiSquare("model", "data", 3);
+
+  model2.paramOn(xframe);
+
+  // Draw the frame on the canvas
+  new TCanvas("composite","composite",600,600) ;
+  gPad->SetLeftMargin(0.15) ; xframe->GetYaxis()->SetTitleOffset(1.4) ; xframe->Draw() ;
+
+  TLegend *legend = new TLegend(0.7,0.7,0.9,0.9);
+  legend->SetTextFont(72);
+  legend->SetTextSize(0.05);
+  legend->AddEntry("Data","Data","P ");
+  legend->AddEntry("Pythia+Pompyt","Pythia+Pompyt","L ");
+  legend->AddEntry("Pythia","Pythia","L ");
+  legend->Draw();
+
+}
+
+// L I K E L I H O O D   E X T E N D E D   G L O B A L   F I T//
+
+void DGlobalFit(TString type){
+
+  if(type == "AllZ"){
+    TFile *data  = TFile::Open("TTreeAllZ_histo_Z_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeAllZ_histo_DY_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeAllZ_histo_Pompyt_Reco.root");
+  }else if(type == "GoldenZ"){
+    TFile *data  = TFile::Open("TTreeGoldenDiffZ_histo_Z_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeGoldenDiffZ_histo_DY_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeGoldenDiffZ_histo_Pompyt_Reco.root");
+  }else if(type == "AllElectron"){
+    TFile *data  = TFile::Open("TTreeAllDiffZ_histo_Electron_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeAllDiffZ_histo_DyToEE_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeAllDiffZ_histo_Pompyt_electron_Reco.root");
+  }else if(type == "GoldenElectron"){
+    TFile *data  = TFile::Open("TTreeGoldenDiffZ_histo_Electron_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeGoldenDiffZ_histo_DyToEE_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeGoldenDiffZ_histo_Pompyt_electron_Reco.root");
+  }else if(type == "AllMuon"){
+    TFile *data  = TFile::Open("TTreeAllDiffZ_histo_Muon_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeAllDiffZ_histo_DyToMuMu_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeAllDiffZ_histo_Pompyt_muon_Reco.root");
+  }else if(type == "GoldenMuon"){
+    TFile *data  = TFile::Open("TTreeGoldenDiffZ_histo_Muon_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeGoldenDiffZ_histo_DyToMuMu_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeGoldenDiffZ_histo_Pompyt_muon_Reco.root");
+  }else{
+    std::cout << "Please, put correct option." << std::endl;
+    exit(0);
+  }
+
+  TTree *datain = (TTree*)data->Get("Events");
+  TTree *pythiain = (TTree*)pythia->Get("Events");
+  TTree *pompytin = (TTree*)pompyt->Get("Events");
+
+  RooRealVar SumEEEMinus("SumEEEMinus","SumEEEMinus",0,100);
+  RooRealVar XiMinusFromPFCands("XiMinusFromPFCands","XiMinusFromPFCands",0,1);
+  RooRealVar MultiplicityTracks("MultiplicityTracks","MultiplicityTracks",0,500);
+  RooRealVar DiBosonEta("DiBosonEta","DiBosonEta",-50,50); //Roofit makes an automatic binning.
+  RooRealVar EtaSigned("etasigned","etasigned",-5,5); // different number of events.
+
+  RooDataSet DataSet("data","data",datain,RooArgSet(SumEEEMinus,XiMinusFromPFCands,MultiplicityTracks,DiBosonEta));
+  RooDataSet pythiaSet("pythia","pythia",pythiain,RooArgSet(SumEEEMinus,XiMinusFromPFCands,MultiplicityTracks,DiBosonEta));
+  RooDataSet pompytSet("pompyt","pompyt",pompytin,RooArgSet(SumEEEMinus,XiMinusFromPFCands,MultiplicityTracks,DiBosonEta));
+
+  DataSet.Print();
+  pythiaSet.Print();
+  pompytSet.Print();
+
+
+  //   P Y T H I A
+  RooDataHist pythiaHistoSumEEE("pythiaHistoSumEEE","pythiaHistoSumEEE", SumEEEMinus, pythiaSet);
+  RooHistPdf pythiaPDFSumEEE("pythiaPDFSumEEE", "pythiaPDFSumEEE", SumEEEMinus, pythiaHistoSumEEE) ;
+
+  RooDataHist pythiaHistoXiMinus("pythiaHistoXiMinus","pythiaHistoXiMinus", XiMinusFromPFCands, pythiaSet);
+  RooHistPdf pythiaPDFXiMinus("pythiaPDFXiMinus", "pythiaPDFXiMinus", XiMinusFromPFCands, pythiaHistoXiMinus) ;
+
+  RooDataHist pythiaHistoTracks("pythiaHistoTracks","pythiaHistoTracks", MultiplicityTracks, pythiaSet);
+  RooHistPdf pythiaPDFTracks("pythiaPDFTracks", "pythiaPDFTracks", MultiplicityTracks, pythiaHistoTracks) ;
+
+  RooDataHist pythiaHistoDiBosonEta("pythiaHistoDiBosonEta","pythiaHistoDiBosonEta", DiBosonEta, pythiaSet);
+  RooHistPdf pythiaPDFDiBosonEta("pythiaPDFDiBosonEta", "pythiaPDFDiBosonEta", DiBosonEta, pythiaHistoDiBosonEta) ;
+
+  RooDataHist pythiaHistoEtaSigned("pythiaHistoEtaSigned","pythiaHistoEtaSigned", EtaSigned, pythiaSet);
+  RooHistPdf pythiaPDFEtaSigned("pythiaPDFEtaSigned", "pythiaPDFEtaSigned", EtaSigned, pythiaHistoEtaSigned) ;
+
+
+  //   P O M P Y T
+  RooDataHist pompytHistoSumEEE("pompytHistoSumEEE","pompytHistoSumEEE", SumEEEMinus, pompytSet);
+  RooHistPdf pompytPDFSumEEE("pompytPDFSumEEE", "pompytPDFSumEEE", SumEEEMinus, pompytHistoSumEEE) ;
+
+  RooDataHist pompytHistoXiMinus("pompytHistoXiMinus","pompytHistoXiMinus", XiMinusFromPFCands, pompytSet);
+  RooHistPdf pompytPDFXiMinus("pompytPDFXiMinus", "pompytPDFXiMinus", XiMinusFromPFCands, pompytHistoXiMinus) ;
+
+  RooDataHist pompytHistoTracks("pompytHistoTracks","pompytHistoTracks", MultiplicityTracks, pompytSet);
+  RooHistPdf pompytPDFTracks("pompytPDFTracks", "pompytPDFTracks", MultiplicityTracks, pompytHistoTracks) ;
+
+  RooDataHist pompytHistoDiBosonEta("pompytHistoDiBosonEta","pompytHistoDiBosonEta", DiBosonEta, pompytSet);
+  RooHistPdf pompytPDFDiBosonEta("pompytPDFDiBosonEta", "pompytPDFDiBosonEta", DiBosonEta, pompytHistoDiBosonEta) ;
+
+  RooDataHist pompytHistoEtaSigned("pompytHistoEtaSigned","pompytHistoEtaSigned", EtaSigned, pompytSet);
+  RooHistPdf pompytPDFEtaSigned("pompytPDFEtaSigned", "pompytPDFEtaSigned", EtaSigned, pompytHistoEtaSigned) ;
+
+
+  //   F R E E   P A R A M E T E R S 
+  RooRealVar nbkg("nbkg","number of background",500,0,10000);
+  RooRealVar nsig("nsig","number of signal",500,0,10000);
+
+
+  //   M U L T I P L Y I N G   P D F S
+  RooProdPdf modelPythia("modelpythia","modelpythia",RooArgSet(pythiaPDFSumEEE,pythiaPDFXiMinus,pythiaPDFTracks,pythiaPDFDiBosonEta));
+  RooProdPdf modelPompyt("modelpompyt","modelpompyt",RooArgSet(pompytPDFSumEEE,pompytPDFXiMinus,pompytPDFTracks,pompytPDFDiBosonEta));
+
+
+  //   C R E A T I N G   M O D E L
+  RooAddPdf  model("model","(g1+g2)+a",RooArgList(modelPythia,modelPompyt),RooArgList(nbkg,nsig)) ;
+  model.fitTo(DataSet,Extended(kTRUE)) ;
+
+
+  //   P L O T T I N G   E A C H   D I M E N S I O N
+
+
+  // Plot SumEEE
+  RooPlot* xframeSumEEE = SumEEEMinus.frame(Title("extended ML fit example")) ;
+  DataSet.plotOn(xframeSumEEE,RooFit::Name("Data")) ;
+  model.plotOn(xframeSumEEE,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeSumEEE,Components(pythiaPDFSumEEE),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeSumEEE,Components(RooArgSet(pythiaPDFSumEEE,pompytPDFSumEEE)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.Print("t") ;
+
+  // Plot xiMinus
+  RooPlot* xframeXiMinus = XiMinusFromPFCands.frame(Title("extended ML fit example")) ;
+  DataSet.plotOn(xframeXiMinus,RooFit::Name("Data")) ;
+  model.plotOn(xframeXiMinus,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeXiMinus,Components(pythiaPDFXiMinus),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeXiMinus,Components(RooArgSet(pythiaPDFXiMinus,pompytPDFXiMinus)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.Print("t") ;
+
+  // Plot Tracks
+  RooPlot* xframeTracks = MultiplicityTracks.frame(Title("extended ML fit example")) ;
+  DataSet.plotOn(xframeTracks,RooFit::Name("Data")) ;
+  model.plotOn(xframeTracks,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeTracks,Components(pythiaPDFTracks),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeTracks,Components(RooArgSet(pythiaPDFTracks,pompytPDFTracks)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.Print("t") ;
+
+  // Plot DiBoson Eta
+  RooPlot* xframeDiBosonEta = DiBosonEta.frame(Title("extended ML fit example")) ;
+  DataSet.plotOn(xframeDiBosonEta,RooFit::Name("Data"));
+  model.plotOn(xframeDiBosonEta,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeDiBosonEta,Components(pythiaPDFDiBosonEta),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeDiBosonEta,Components(RooArgSet(pythiaPDFDiBosonEta,pompytPDFDiBosonEta)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.Print("t") ;
+
+  /////////////////////
+  // M E T H O D   2 //
+  /////////////////////
+
+  // C o n s t r u c t   e x t e n d e d   c o m p o n e n t s   f i r s t
+  // ---------------------------------------------------------------------
+
+  // Associated nsig/nbkg as expected number of events with sig/bkg
+  RooExtendPdf esig("esig","extended signal p.d.f",modelPompyt,nsig) ;
+  RooExtendPdf ebkg("ebkg","extended background p.d.f",modelPythia,nbkg) ;
+
+  // S u m   e x t e n d e d   c o m p o n e n t s   w i t h o u t   c o e f s
+  // -------------------------------------------------------------------------
+
+  // Construct sum of two extended p.d.f. (no coefficients required)
+  RooAddPdf  model2("model2","(g1+g2)+a",RooArgList(ebkg,esig)) ;
+
+  RooFitResult* r = model2.fitTo(DataSet,RooFit::Save()) ;
+  r->Print("esig");
+  r->Print("ebkg");
+  r->Print("v") ;
+
+  model2.paramOn(xframeSumEEE);
+  model2.paramOn(xframeTracks);
+  model2.paramOn(xframeXiMinus);
+  model2.paramOn(xframeDiBosonEta);
+
+  TCanvas *c1 = new TCanvas("c1","multipads",900,700);
+  c1->Divide(2,2);
+
+  gPad->SetLeftMargin(0.15);
+  c1->cd(1);
+  xframeSumEEE->GetYaxis()->SetTitleOffset(1.4) ; xframeSumEEE->Draw() ;
+  c1->cd(2);
+  xframeXiMinus->GetYaxis()->SetTitleOffset(1.4) ; xframeXiMinus->Draw() ;
+  c1->cd(3);
+  xframeTracks->GetYaxis()->SetTitleOffset(1.4) ; xframeTracks->Draw() ;
+  c1->cd(4);
+  xframeDiBosonEta->GetYaxis()->SetTitleOffset(1.4) ;  xframeDiBosonEta->Draw() ;
+
+  c1->cd(1);
+  TLegend *legend = new TLegend(0.7,0.7,0.9,0.9);
+  legend->SetTextFont(72);
+  legend->SetTextSize(0.05);
+  legend->AddEntry("Data","Data","P ");
+  legend->AddEntry("Pythia+Pompyt","Pythia+Pompyt","L ");
+  legend->AddEntry("Pythia","Pythia","L ");
+  legend->Draw();
+
+}
