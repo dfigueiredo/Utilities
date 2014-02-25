@@ -87,9 +87,11 @@ void DiffractiveZPlotter(){
   //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
   //MakePlotRatio("LeptonsKinematics/BosonZEta_single_step7","LeptonsKinematics/BosonZEta_single_step7","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
   //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTOR","LeptonsKinematics/BosonZEta_single_NGapCASTOR","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
 
-  DGlobalFit("GoldenZ");
+
+  // Options: AllZ, GoldenZ, GapCASTORZ, AllElectron, GoldenElectron, GapCASTORElectron, AllMuon, GoldenMuon, GapCASTORMuon  
+  DGlobalFit("GapCASTORZ");
 
 }
 
@@ -652,6 +654,10 @@ void DGlobalFit(TString type){
     TFile *data  = TFile::Open("TTreeGoldenDiffZ_histo_Z_Reco.root");
     TFile *pythia  = TFile::Open("TTreeGoldenDiffZ_histo_DY_Reco.root");
     TFile *pompyt  = TFile::Open("TTreeGoldenDiffZ_histo_Pompyt_Reco.root");
+  }else if(type == "GapCASTORZ"){
+    TFile *data  = TFile::Open("TTreeCASTOR_histo_Z_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeCASTOR_histo_DY_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeCASTOR_histo_Pompyt_Reco.root");
   }else if(type == "AllElectron"){
     TFile *data  = TFile::Open("TTreeAllDiffZ_histo_Electron_Reco.root");
     TFile *pythia  = TFile::Open("TTreeAllDiffZ_histo_DyToEE_Reco.root");
@@ -660,6 +666,10 @@ void DGlobalFit(TString type){
     TFile *data  = TFile::Open("TTreeGoldenDiffZ_histo_Electron_Reco.root");
     TFile *pythia  = TFile::Open("TTreeGoldenDiffZ_histo_DyToEE_Reco.root");
     TFile *pompyt  = TFile::Open("TTreeGoldenDiffZ_histo_Pompyt_electron_Reco.root");
+  }else if(type == "GapCASTORElectron"){
+    TFile *data  = TFile::Open("TTreeCASTOR_histo_Electron_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeCASTOR_histo_DyToEE_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeCASTOR_histo_Pompyt_electron_Reco.root");
   }else if(type == "AllMuon"){
     TFile *data  = TFile::Open("TTreeAllDiffZ_histo_Muon_Reco.root");
     TFile *pythia  = TFile::Open("TTreeAllDiffZ_histo_DyToMuMu_Reco.root");
@@ -668,6 +678,10 @@ void DGlobalFit(TString type){
     TFile *data  = TFile::Open("TTreeGoldenDiffZ_histo_Muon_Reco.root");
     TFile *pythia  = TFile::Open("TTreeGoldenDiffZ_histo_DyToMuMu_Reco.root");
     TFile *pompyt  = TFile::Open("TTreeGoldenDiffZ_histo_Pompyt_muon_Reco.root");
+  }else if(type == "GapCASTORMuon"){
+    TFile *data  = TFile::Open("TTreeCASTOR_histo_Muon_Reco.root");
+    TFile *pythia  = TFile::Open("TTreeCASTOR_histo_DyToMuMu_Reco.root");
+    TFile *pompyt  = TFile::Open("TTreeCASTOR_histo_Pompyt_muon_Reco.root");
   }else{
     std::cout << "Please, put correct option." << std::endl;
     exit(0);
