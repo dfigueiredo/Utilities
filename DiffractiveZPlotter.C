@@ -58,40 +58,41 @@ void DiffractiveZPlotter(){
   // Diffraction Plots 
   //------------------
 
-  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTOR","Diffraction/xiMinusPF_single_NGapCASTOR","noauto","z","width","#frac{d#sigma}{d#xi}_{-}","norebin","noratio","all"); //always 0!
-  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","width","#frac{d#sigma}{d#xi}_{-}","norebin","noratio","all"); //always 0!
-  //MakePlotRatio("Diffraction/etasigned_single_NGapCASTORAndZKinP","Diffraction/etasigned_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","width","#frac{d#sigma}{d#xi}_{-}","norebin","noratio","all");//always 0!
-  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all");//always 0!
-  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCMSAndZKinP","Diffraction/xiMinusPF_single_NGapCMSAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  //MakePlotRatio("Diffraction/xiMinusPF_single_step7","Diffraction/xiMinusPF_single_step7","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  //MakePlotRatio("Diffraction/maxetagap_single_step7","Diffraction/maxetagap_single_step7","noauto","z","nowidth","","norebin","noratio","all"); //always 0!
-  //MakePlotRatio("Diffraction/maxetagap_single_NGapCMS","Diffraction/maxetagap_single_NGapCMS","noauto","z","nowidth","","norebin","noratio","all"); //always 0!
-  //MakePlotRatio("Diffraction/maxetagap_single_NGapCASTORAndZKinP","Diffraction/maxetagap_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTOR","Diffraction/xiMinusPF_single_NGapCASTOR","noauto","z","width","#frac{d#sigma}{d#xi}_{-}",0,"noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","width","#frac{d#sigma}{d#xi}_{-}",0,"noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/etasignedHF_single_step7","Diffraction/etasignedHF_single_step7","noauto","z","nowidth","",5,"noratio","nall"); //always 0!
+  //MakePlotRatio("Diffraction/etasignedCASTOR_single_step7","Diffraction/etasignedCASTOR_single_step7","noauto","z","nowidth","",5,"noratio","nall"); //always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","width","#frac{d#sigma}{d#xi}_{-}",0,"noratio","all");//always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","nowidth","",0,"ratio","all");//always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCMSAndZKinP","Diffraction/xiMinusPF_single_NGapCMSAndZKinP","noauto","z","nowidth","",0,"ratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/xiMinusPF_single_step7","Diffraction/xiMinusPF_single_step7","noauto","z","nowidth","",0,"ratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/maxetagap_single_step7","Diffraction/maxetagap_single_step7","noauto","z","nowidth","",0,"noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/maxetagap_single_NGapCMS","Diffraction/maxetagap_single_NGapCMS","noauto","z","nowidth","",0,"noratio","all"); //always 0!
+  //MakePlotRatio("Diffraction/maxetagap_single_NGapCASTORAndZKinP","Diffraction/maxetagap_single_NGapCASTORAndZKinP","noauto","z","nowidth","",0,"noratio","all"); //always 0!
 
   // Detector Plots
   //---------------
 
-  //MakePlotRatio("Detector/TracksLow_single_NGapCASTORAndZKinP","Detector/TracksLow_single_NGapCASTORAndZKinP","noauto","z","nowidth","","rebin","noratio","all"); //always 0!
-  //MakePlotRatio("Detector/TracksLow_single_NGapCASTOR","Detector/TracksLow_single_NGapCASTOR","noauto","z","nowidth","","rebin","noratio","all"); //always 0!
-  //MakePlotRatio("Detector/TracksLow_single_step7","Detector/TracksLow_single_step7","noauto","z","nowidth","","rebin","noratio","all"); //always 0!
-  //MakePlotRatio("Detector/TracksLow_single_NGapCMS","Detector/TracksLow_single_NGapCMS","noauto","z","nowidth","","rebin","ratio","all"); //always 0!
-  //MakePlotRatio("Detector/sumEEEminus_single_NGapCASTORAndZKinP","Detector/sumEEEminus_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","noratio","all"); //always 0!
-  //MakePlotRatio("Detector/sumEEEminus_single_step7","Detector/sumEEEminus_single_step7","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  //MakePlotRatio("Detector/sumEEEminus_single_NGapCMSAndZKinP","Detector/sumEEEminus_single_NGapCMSAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  //MakePlotRatio("Detector/sumEEEminus_single_NGapCASTORAndZKinP","Detector/sumEEEminus_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("Detector/TracksLow_single_NGapCASTORAndZKinP","Detector/TracksLow_single_NGapCASTORAndZKinP","noauto","z","nowidth","",4,"noratio","all"); //always 0!
+  //MakePlotRatio("Detector/TracksLow_single_NGapCASTOR","Detector/TracksLow_single_NGapCASTOR","noauto","z","nowidth","",4,"noratio","all"); //always 0!
+  //MakePlotRatio("Detector/TracksLow_single_step7","Detector/TracksLow_single_step7","noauto","z","nowidth","",4,"noratio","all"); //always 0!
+  //MakePlotRatio("Detector/TracksLow_single_NGapCMS","Detector/TracksLow_single_NGapCMS","noauto","z","nowidth","",4,"ratio","all"); //always 0!
+  //MakePlotRatio("Detector/sumEEEminus_single_NGapCASTORAndZKinP","Detector/sumEEEminus_single_NGapCASTORAndZKinP","noauto","z","nowidth","",0,"noratio","all"); //always 0!
+  //MakePlotRatio("Detector/sumEEEminus_single_step7","Detector/sumEEEminus_single_step7","noauto","z","nowidth","",0,"ratio","nall"); //always 0!
+  //MakePlotRatio("Detector/sumEEEminus_single_NGapCMSAndZKinP","Detector/sumEEEminus_single_NGapCMSAndZKinP","noauto","z","nowidth","",0,"ratio","all"); //always 0!
+  //MakePlotRatio("Detector/sumEEEminus_single_NGapCASTORAndZKinP","Detector/sumEEEminus_single_NGapCASTORAndZKinP","noauto","z","nowidth","",0,"ratio","all"); //always 0!
 
   // Kinematics Plots
   //-----------------
 
-  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_step7","LeptonsKinematics/BosonZEta_single_step7","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTOR","LeptonsKinematics/BosonZEta_single_NGapCASTOR","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
-  MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","","norebin","ratio","all"); //always 0!
+  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","",0,"ratio","all"); //always 0!
+  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_step7","LeptonsKinematics/BosonZEta_single_step7","noauto","z","nowidth","",2,"ratio","nall"); //always 0!
+  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTOR","LeptonsKinematics/BosonZEta_single_NGapCASTOR","noauto","z","nowidth","",0,"ratio","all"); //always 0!
+  //MakePlotRatio("LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","LeptonsKinematics/BosonZEta_single_NGapCASTORAndZKinP","noauto","z","nowidth","",0,"ratio","all"); //always 0!
 
 
   // Options: AllZ, GoldenZ, GapCASTORZ, AllElectron, GoldenElectron, GapCASTORElectron, AllMuon, GoldenMuon, GapCASTORMuon  
-  DGlobalFit("GapCASTORZ");
+  DGlobalFit("GoldenZ");
 
 }
 
@@ -354,7 +355,7 @@ void format_h(TH1F* h, int linecolor){
 // P L O T T E R    D I F F R A C T I V E   Z
 //-------------------------------------------
 
-void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString type, TString diff, TString ytitle, TString rebinopt, TString mode, TString SumHisto){
+void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString type, TString diff, TString ytitle, int rebinopt, TString mode, TString SumHisto){
 
   TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
   TString legdata, legmc1, legmc2, legboth;
@@ -417,10 +418,10 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString type
     h_3->GetYaxis()->SetTitle("N Events");
   }
 
-  if(rebinopt == "rebin"){
-    h_1->Rebin(4);
-    h_2->Rebin(4);
-    h_3->Rebin(4);
+  if(rebinopt > 0){
+    h_1->Rebin(rebinopt);
+    h_2->Rebin(rebinopt);
+    h_3->Rebin(rebinopt);
   }
 
   leg->AddEntry(h_1,legdata,"p");
@@ -691,10 +692,10 @@ void DGlobalFit(TString type){
   TTree *pythiain = (TTree*)pythia->Get("Events");
   TTree *pompytin = (TTree*)pompyt->Get("Events");
 
-  RooRealVar SumEEEMinus("SumEEEMinus","SumEEEMinus",0,100);
+  RooRealVar SumEEEMinus("SumEEEMinus","SumEEEMinus",0,100); //100
   RooRealVar XiMinusFromPFCands("XiMinusFromPFCands","XiMinusFromPFCands",0,1);
   RooRealVar MultiplicityTracks("MultiplicityTracks","MultiplicityTracks",0,500);
-  RooRealVar DiBosonEta("DiBosonEta","DiBosonEta",-50,50); //Roofit makes an automatic binning.
+  RooRealVar DiBosonEta("DiBosonEta","DiBosonEta",-50,50); //Roofit makes an automatic binning. -50,50
   RooRealVar EtaSigned("etasigned","etasigned",-5,5); // different number of events.
 
   RooDataSet DataSet("data","data",datain,RooArgSet(SumEEEMinus,XiMinusFromPFCands,MultiplicityTracks,DiBosonEta));
