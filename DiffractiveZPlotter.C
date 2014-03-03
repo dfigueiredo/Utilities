@@ -61,7 +61,9 @@ void DiffractiveZPlotter(){
   //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTOR","Diffraction/xiMinusPF_single_NGapCASTOR","noauto","z","width","#frac{d#sigma}{d#xi}_{-}",0,"noratio","all"); //always 0!
   //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","width","#frac{d#sigma}{d#xi}_{-}",0,"noratio","all"); //always 0!
   //MakePlotRatio("Diffraction/etasignedHF_single_step7","Diffraction/etasignedHF_single_step7","noauto","z","nowidth","",5,"noratio","nall"); //always 0!
-  //MakePlotRatio("Diffraction/etasignedCASTOR_single_step7","Diffraction/etasignedCASTOR_single_step7","noauto","z","nowidth","",5,"noratio","nall"); //always 0!
+  //MakePlotRatio("Diffraction/etasignedHF_single_NGapCMSAndZKinP","Diffraction/etasignedHF_single_NGapCMSAndZKinP","noauto","z","nowidth","",5,"noratio","nall"); //always 0!
+  //MakePlotRatio("Diffraction/etasignedCASTOR_single_step7","Diffraction/etasignedHF_single_step7","noauto","z","nowidth","",5,"noratio","nall"); //always 0!
+  //MakePlotRatio("Diffraction/etasignedCASTOR_single_NGapCASTORAndZKinP","Diffraction/etasignedCASTOR_single_NGapCASTORAndZKinP","noauto","z","nowidth","",5,"noratio","nall"); //always 0!
   //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","width","#frac{d#sigma}{d#xi}_{-}",0,"noratio","all");//always 0!
   //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","Diffraction/xiMinusPF_single_NGapCASTORAndZKinP","noauto","z","nowidth","",0,"ratio","all");//always 0!
   //MakePlotRatio("Diffraction/xiMinusPF_single_NGapCMSAndZKinP","Diffraction/xiMinusPF_single_NGapCMSAndZKinP","noauto","z","nowidth","",0,"ratio","all"); //always 0!
@@ -92,7 +94,7 @@ void DiffractiveZPlotter(){
 
 
   // Options: AllZ, GoldenZ, GapCASTORZ, AllElectron, GoldenElectron, GapCASTORElectron, AllMuon, GoldenMuon, GapCASTORMuon  
-  DGlobalFit("GoldenZ");
+  DGlobalFit("AllZ");
 
 }
 
@@ -742,8 +744,8 @@ void DGlobalFit(TString type){
 
 
   //   F R E E   P A R A M E T E R S 
-  RooRealVar nbkg("nbkg","number of background",500,0,10000);
-  RooRealVar nsig("nsig","number of signal",500,0,10000);
+  RooRealVar nbkg("nbkg","number of background",1,0,10000);
+  RooRealVar nsig("nsig","number of signal",1,0,10000);
 
 
   //   M U L T I P L Y I N G   P D F S
@@ -762,33 +764,33 @@ void DGlobalFit(TString type){
   // Plot SumEEE
   RooPlot* xframeSumEEE = SumEEEMinus.frame(Title("extended ML fit example")) ;
   DataSet.plotOn(xframeSumEEE,RooFit::Name("Data")) ;
-  model.plotOn(xframeSumEEE,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  //model.plotOn(xframeSumEEE,Normalization(1.0,RooAbsReal::RelativeExpected),LineColor(kOrange)) ;
   model.plotOn(xframeSumEEE,Components(pythiaPDFSumEEE),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
-  model.plotOn(xframeSumEEE,Components(RooArgSet(pythiaPDFSumEEE,pompytPDFSumEEE)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeSumEEE,Components(RooArgSet(pythiaPDFSumEEE,pompytPDFSumEEE)),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
   model.Print("t") ;
 
   // Plot xiMinus
   RooPlot* xframeXiMinus = XiMinusFromPFCands.frame(Title("extended ML fit example")) ;
   DataSet.plotOn(xframeXiMinus,RooFit::Name("Data")) ;
-  model.plotOn(xframeXiMinus,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  //model.plotOn(xframeXiMinus,Normalization(1.0,RooAbsReal::RelativeExpected),LineColor(kOrange)) ;
   model.plotOn(xframeXiMinus,Components(pythiaPDFXiMinus),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
-  model.plotOn(xframeXiMinus,Components(RooArgSet(pythiaPDFXiMinus,pompytPDFXiMinus)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeXiMinus,Components(RooArgSet(pythiaPDFXiMinus,pompytPDFXiMinus)),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
   model.Print("t") ;
 
   // Plot Tracks
   RooPlot* xframeTracks = MultiplicityTracks.frame(Title("extended ML fit example")) ;
   DataSet.plotOn(xframeTracks,RooFit::Name("Data")) ;
-  model.plotOn(xframeTracks,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  //model.plotOn(xframeTracks,Normalization(1.0,RooAbsReal::RelativeExpected),LineColor(kOrange)) ;
   model.plotOn(xframeTracks,Components(pythiaPDFTracks),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
-  model.plotOn(xframeTracks,Components(RooArgSet(pythiaPDFTracks,pompytPDFTracks)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeTracks,Components(RooArgSet(pythiaPDFTracks,pompytPDFTracks)),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
   model.Print("t") ;
 
   // Plot DiBoson Eta
   RooPlot* xframeDiBosonEta = DiBosonEta.frame(Title("extended ML fit example")) ;
   DataSet.plotOn(xframeDiBosonEta,RooFit::Name("Data"));
-  model.plotOn(xframeDiBosonEta,Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  //model.plotOn(xframeDiBosonEta,Normalization(1.0,RooAbsReal::RelativeExpected),LineColor(kOrange)) ;
   model.plotOn(xframeDiBosonEta,Components(pythiaPDFDiBosonEta),Name("Pythia"),LineStyle(kDashed),LineColor(kRed),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
-  model.plotOn(xframeDiBosonEta,Components(RooArgSet(pythiaPDFDiBosonEta,pompytPDFDiBosonEta)),LineStyle(kDotted),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
+  model.plotOn(xframeDiBosonEta,Components(RooArgSet(pythiaPDFDiBosonEta,pompytPDFDiBosonEta)),Name("Pythia+Pompyt"),Normalization(1.0,RooAbsReal::RelativeExpected)) ;
   model.Print("t") ;
 
   /////////////////////
