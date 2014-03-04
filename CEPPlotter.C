@@ -31,10 +31,10 @@ void CEPPlotter(){
   StyleNice();
 
   // Diffractive Variables
-  //MakePlotRatio("RJJ_no_multiple_pileup_step4_4","RJJ_multiple_pileup_0_step4_4","noauto","nowidth","",4,"ratio","all"); //always 0!
+  MakePlotRatio("RJJ_no_multiple_pileup_step4_4","RJJ_multiple_pileup_0_step4_4","noauto","nowidth","",0,"ratio","all"); //always 0!
   //MakePlotRatio("RJJ_no_multiple_pileup_step4_3","RJJ_multiple_pileup_0_step4_3","noauto","nowidth","",4,"ratio","all"); //always 0!
   //MakePlotRatio("RJJ_no_multiple_pileup_step4_2","RJJ_multiple_pileup_0_step4_2","noauto","nowidth","",4,"noratio","all"); //always 0!
-  MakePlotRatio("RJJ_no_multiple_pileup_step4_2_CASTOR","RJJ_multiple_pileup_0_step4_2_CASTOR","noauto","nowidth","",4,"noratio","all");//always 0!
+  //MakePlotRatio("RJJ_no_multiple_pileup_step4_2_CASTOR","RJJ_multiple_pileup_0_step4_2_CASTOR","noauto","nowidth","",4,"noratio","all");//always 0!
   //MakePlotRatio("deltaEtamaxminPF_no_multiple_pileup_step4_4","deltaEtamaxminPF_multiple_pileup_0_step4_4","noauto","width","dN/d#eta",2,"ratio","nall"); //always 0!
   //MakePlotRatio("deltaEtamaxminPF_no_multiple_pileup_step4_2","deltaEtamaxminPF_multiple_pileup_0_step4_2","noauto","nowidth","",4,"noratio","all"); //always 0!
   //MakePlotRatio("deltaEtamaxminPF_no_multiple_pileup_step4_2_CASTOR","deltaEtamaxminPF_multiple_pileup_0_step4_2_CASTOR","noauto","nowidth","",4,"noratio","all"); //always 0!
@@ -171,6 +171,8 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
   TFile *data_up_trigger = TFile::Open("plus_trigger_histo_multijet_HLTExclDiJet30U_AND_HFPreSel_GoodVertex_triggerRefDijet50And30_68mb_24bin_pT60_60.root");
   TFile *data_down_trigger = TFile::Open("minus_trigger_histo_multijet_HLTExclDiJet30U_AND_HFPreSel_GoodVertex_triggerRefDijet50And30_68mb_24bin_pT60_60.root");
   TFile *data_trigger_eff = TFile::Open("nonehisto_multijet_HLTExclDiJet30U_AND_HFPreSel_GoodVertex_triggerRefDijet50And30_triggercorr_effcorr_68mb_24bin_pT60_60.root");
+  TFile *data_trigger = TFile::Open("nonehisto_multijet_HLTExclDiJet30U_AND_HFPreSel_GoodVertex_triggerRefDijet50And30_triggercorr_68mb_24bin_pT60_60.root");
+
   TFile *exhume = TFile::Open("histo_exhume.root");
   TFile *pompyt = TFile::Open("histo_pompyt.root");
   TFile *pomwig = TFile::Open("histo_pomwig.root"); 
@@ -188,6 +190,7 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
   TH1F* h_4 = (TH1F*)pomwig->Get(name1);
   TH1F* h_5 = (TH1F*)herwigpu0->Get(name2);
   TH1F* h_1_trigger_eff = (TH1F*)data_trigger_eff->Get(name1);
+  TH1F* h_1_trigger = (TH1F*)data_trigger->Get(name1);
   TH1F* h_1_up_jets = (TH1F*)data_up_jets->Get(name1);
   TH1F* h_1_down_jets = (TH1F*)data_down_jets->Get(name1);
   TH1F* h_1_up_pf = (TH1F*)data_up_pf->Get(name1);
@@ -204,6 +207,7 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
     h_1_down_pf->Rebin(rebinopt);
     h_1_up_trigger->Rebin(rebinopt);
     h_1_down_trigger->Rebin(rebinopt);
+       h_1_trigger->Rebin(rebinopt);
     h_2->Rebin(rebinopt);
     h_3->Rebin(rebinopt);
     h_4->Rebin(rebinopt);
@@ -220,6 +224,7 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
     h_1_down_pf->Scale(lumi,"width");
     h_1_up_trigger->Scale(lumi,"width");
     h_1_down_trigger->Scale(lumi,"width");
+    h_1_trigger->Scale(lumi,"width");
     h_2->Scale(lumi,"width");
     h_3->Scale(lumi,"width");
     h_4->Scale(lumi,"width");
@@ -243,7 +248,10 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
   h_1_up_pf->Sumw2();
   h_1_down_jets->Sumw2();
   h_1_down_pf->Sumw2();
+  h_1_down_trigger->Sumw2();
+  h_1_up_trigger->Sumw2();
   h_1_trigger_eff->Sumw2();
+  h_1_trigger->Sumw2();
   h_2->Sumw2();
   h_3->Sumw2();
   h_4->Sumw2();
@@ -363,8 +371,8 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
     float deltadownpf2 = pow(h_1_down_pf->GetBinContent(i)-h_1->GetBinContent(i),2);
     float deltaupjets2 = pow(h_1_up_jets->GetBinContent(i)-h_1->GetBinContent(i),2);
     float deltadownjets2 = pow(h_1_down_jets->GetBinContent(i)-h_1->GetBinContent(i),2);
-    float deltauptrigger2 = pow(h_1_up_trigger->GetBinContent(i)-h_1->GetBinContent(i),2);
-    float deltadowntrigger2 = pow(h_1_down_trigger->GetBinContent(i)-h_1->GetBinContent(i),2);
+    float deltauptrigger2 = pow(h_1_up_trigger->GetBinContent(i)-h_1_trigger->GetBinContent(i),2);
+    float deltadowntrigger2 = pow(h_1_down_trigger->GetBinContent(i)-h_1_trigger->GetBinContent(i),2);
     float statistics2 = pow(h_1->GetBinError(i),2);
 
     x[j] = h_1->GetXaxis()->GetBinCenter(i);
