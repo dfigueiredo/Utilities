@@ -425,6 +425,14 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
 
   DFitExtended(h_1,h_5,h_4,h_2,h_3,h_1->GetXaxis()->GetXmin(),h_1->GetXaxis()->GetXmax());
 
+  cout << "\n S U M M A R Y\n " << endl;
+  cout << "# events Data: " << h_1->GetEntries() << endl;
+  cout << "# events HERWIG PU(0), QCD: " << h_5->GetEntries() << endl;
+  cout << "# events Pomwig, DPE: " << h_4->GetEntries() << endl;
+  cout << "# events Pompyt, SD: " << h_2->GetEntries() << endl;
+  cout << "# events ExHuMe, CEP: " << h_3->GetEntries() << endl;
+  cout << "" << endl;
+
 }
 
 
