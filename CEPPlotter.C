@@ -31,13 +31,13 @@ void CEPPlotter(){
   StyleNice();
 
   // Diffractive Variables
-  MakePlotRatio("RJJ_no_multiple_pileup_step4_4","RJJ_multiple_pileup_0_step4_4","noauto","nowidth","",0,"ratio","all"); //always 0!
+  //MakePlotRatio("RJJ_no_multiple_pileup_step4_4","RJJ_multiple_pileup_0_step4_4","noauto","nowidth","",0,"ratio","all"); //always 0!
   //MakePlotRatio("RJJ_no_multiple_pileup_step4_3","RJJ_multiple_pileup_0_step4_3","noauto","nowidth","",4,"ratio","all"); //always 0!
   //MakePlotRatio("RJJ_no_multiple_pileup_step4_2","RJJ_multiple_pileup_0_step4_2","noauto","nowidth","",4,"noratio","all"); //always 0!
-  //MakePlotRatio("RJJ_no_multiple_pileup_step4_2_CASTOR","RJJ_multiple_pileup_0_step4_2_CASTOR","noauto","nowidth","",4,"noratio","all");//always 0!
+  //MakePlotRatio("RJJ_no_multiple_pileup_step4_2_CASTOR","RJJ_multiple_pileup_0_step4_2_CASTOR","noauto","nowidth","",0,"noratio","all");//always 0!
   //MakePlotRatio("deltaEtamaxminPF_no_multiple_pileup_step4_4","deltaEtamaxminPF_multiple_pileup_0_step4_4","noauto","width","dN/d#eta",2,"ratio","nall"); //always 0!
   //MakePlotRatio("deltaEtamaxminPF_no_multiple_pileup_step4_2","deltaEtamaxminPF_multiple_pileup_0_step4_2","noauto","nowidth","",4,"noratio","all"); //always 0!
-  //MakePlotRatio("deltaEtamaxminPF_no_multiple_pileup_step4_2_CASTOR","deltaEtamaxminPF_multiple_pileup_0_step4_2_CASTOR","noauto","nowidth","",4,"noratio","all"); //always 0!
+  MakePlotRatio("deltaEtamaxminPF_no_multiple_pileup_step4_2_CASTOR","deltaEtamaxminPF_multiple_pileup_0_step4_2_CASTOR","noauto","nowidth","",0,"noratio","all"); //always 0!
   //MakePlotRatio("xiPF_no_multiple_pileup_step4_2_CASTOR","xiPF_multiple_pileup_0_step4_2_CASTOR","noauto","nowidth","",4,"noratio","all"); //always 0!
 
   //Kinematics
@@ -207,7 +207,7 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
     h_1_down_pf->Rebin(rebinopt);
     h_1_up_trigger->Rebin(rebinopt);
     h_1_down_trigger->Rebin(rebinopt);
-       h_1_trigger->Rebin(rebinopt);
+    h_1_trigger->Rebin(rebinopt);
     h_2->Rebin(rebinopt);
     h_3->Rebin(rebinopt);
     h_4->Rebin(rebinopt);
@@ -373,14 +373,17 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
     float deltadownjets2 = pow(h_1_down_jets->GetBinContent(i)-h_1->GetBinContent(i),2);
     float deltauptrigger2 = pow(h_1_up_trigger->GetBinContent(i)-h_1_trigger->GetBinContent(i),2);
     float deltadowntrigger2 = pow(h_1_down_trigger->GetBinContent(i)-h_1_trigger->GetBinContent(i),2);
-    float statistics2 = pow(h_1->GetBinError(i),2);
+    float statisticsdata2 = pow(h_1->GetBinError(i),2);
+    float statisticsqcd2 = pow(h_5->GetBinError(i),2);
+    float statisticssd2 = pow(h_2->GetBinError(i),2);
+    float statisticsdpe2 = pow(h_4->GetBinError(i),2);
 
     x[j] = h_1->GetXaxis()->GetBinCenter(i);
     y[j] = h_1->GetBinContent(i);
     exl[j] = BinWidth/2;
     exh[j] = BinWidth/2;
-    eyh[j] = TMath::Sqrt(deltaupjets2+deltauppf2+statistics2+deltauptrigger2);
-    eyl[j] = TMath::Sqrt(deltadownjets2+deltadownpf2+statistics2+deltadowntrigger2);
+    eyh[j] = TMath::Sqrt(deltaupjets2+deltauppf2+deltauptrigger2+statisticsdata2+statisticsqcd2+statisticssd2+statisticsdpe2);
+    eyl[j] = TMath::Sqrt(deltadownjets2+deltadownpf2+deltadowntrigger2+statisticsdata2+statisticsqcd2+statisticssd2+statisticsdpe2);
 
   }
 
@@ -388,9 +391,9 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
   gr->SetMarkerStyle(20);
   gr->GetYaxis()->SetTitle("N Events");
   gr->GetXaxis()->SetTitle(h_1->GetXaxis()->GetTitle());
-  gr->SetFillStyle(3001);
+  //gr->SetFillStyle(3001);
   gr->SetLineWidth(0);
-  gr->SetFillColor(kOrange+1);
+  gr->SetFillColor(kYellow);
 
   h_5->Draw("HISTO");
   h_4->Draw("SAMEHISTO");
@@ -410,6 +413,13 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
   leg->AddEntry(gr,legdata,"P");
   leg->AddEntry(gr,"Systematics","F");
   gr->Draw("P E2");
+  h_5->Draw("SAMEHISTO");
+  h_4->Draw("SAMEHISTO");
+  h_3->Draw("SAMEHISTO");
+  h_2->Draw("SAMEHISTO");
+  if (SumHisto=="all" || SumHisto == "ALL"){
+    MCtogether->Draw("SAMEHISTO");
+  }
   leg->Draw("SAME");
 
 
@@ -426,11 +436,11 @@ void MakePlotRatio(TString name1, TString name2, TString AutoNorma, TString diff
   DFitExtended(h_1,h_5,h_4,h_2,h_3,h_1->GetXaxis()->GetXmin(),h_1->GetXaxis()->GetXmax());
 
   cout << "\n S U M M A R Y\n " << endl;
-  cout << "# events Data: " << h_1->GetEntries() << endl;
-  cout << "# events HERWIG PU(0), QCD: " << h_5->GetEntries() << endl;
-  cout << "# events Pomwig, DPE: " << h_4->GetEntries() << endl;
-  cout << "# events Pompyt, SD: " << h_2->GetEntries() << endl;
-  cout << "# events ExHuMe, CEP: " << h_3->GetEntries() << endl;
+  cout << "# events Data: " << h_1->Integral() << endl;
+  cout << "# events HERWIG PU(0), QCD: " << h_5->Integral() << endl;
+  cout << "# events Pomwig, DPE: " << h_4->Integral() << endl;
+  cout << "# events Pompyt, SD: " << h_2->Integral() << endl;
+  cout << "# events ExHuMe, CEP: " << h_3->Integral() << endl;
   cout << "" << endl;
 
 }
