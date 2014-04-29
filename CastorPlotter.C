@@ -17,24 +17,37 @@ No defense for empyt histograms or files. Private use.
 
 
 void CastorPlotter(){
+
+  // R O O T   C O S M E T I C S
   //StyleNice();
+
+  // M U L T I P L E    P L O T S    M U O N S
   //MakeMultipleSingle("muon");
+
+  // T H R E S H O L D S   F O R   E A C H   C A S T O R   C H A N N E L 
   //ThresholdsStudiesChannels("histo_Castor_threshold_p1_unpaired.root","unpaired",0,1);
+
+  // T H R E S H O L D S   F O R   E A C H   C A S T O R   S E C T O R
   //ThresholdsStudiesSectors("histo_Castor_threshold_p2_unpaired.root","unpaired",0,1);
   //ThresholdsStudiesSectors("histo_Castor_threshold_p3_unpaired.root","unpaired",0,1);
-  //CalculateCorrector("CastorMappingEnergySelection0_step7","ratio_all.root");
-  //CalculateCorrector("CastorMappingEnergySelection1_step7","ratio_step1.root");
-  //CalculateCorrector("CastorMappingEnergySelection2_step7","ratio_step2.root");
-  //CalculateCorrector("CastorMappingEnergySelection3_step7","ratio_step3.root");
-  //CalculateCorrector("CastorMappingEnergySelection4_step7","ratio_step4.root");
-  //CalculateCorrector("CastorMappingEnergySelection5_step7","ratio_step5.root");
-  //CalculateCorrector("CastorMappingEnergySelection6_step7","ratio_step6.root");
-  CalculateCorrectorFlow();
+
+  // C O M P U T E   C O R R E C T I O N   F A C T O R S
+  //CalculateCorrector("CastorMappingEnergySelection0_step7","channelcorrector.root");
+
+  // C O M P U T E   B E H A V I O U R   O F   C O R R E C T I O N    W I T H   E N E R G Y   C H A N G E S
+  //FlowEnergy();
 
 }
 
+void FlowEnergy(){
+  CalculateCorrector("CastorMappingEnergySelection1_step7","ratio_step1.root");
+  CalculateCorrector("CastorMappingEnergySelection2_step7","ratio_step2.root");
+  CalculateCorrector("CastorMappingEnergySelection3_step7","ratio_step3.root");
+  CalculateCorrectorFlow();
+}
+
 //
-// Create a list of objects from a rootfile
+// L I S T   O F   H I S T O G R A M S   I N   A   G I V E N   F I L E
 //
 // Output: ListOfHistograms.txt
 
@@ -45,7 +58,7 @@ void RunAll(TString filename, TString logOpt, TString autonorma, TString type, T
   gStyle->SetOptStat(0);
   TFile *f1= new TFile(filename);
 
-  TList* tdf_obs = f1->GetListOfKeys(); 
+  TList* tdf_obs = f1->GetListOfKeys();
   char *hName1 = new char [80];
   char *filesave = new char[80];
 
@@ -72,7 +85,7 @@ void RunAll(TString filename, TString logOpt, TString autonorma, TString type, T
     if (obj->IsA()->InheritsFrom("TDirectory")) {
       TDirectory *d = static_cast<TDirectory*>(obj);
       cout << "Dir: " << d->GetPath() << endl;
-    } 
+    }
 
     if (h->GetEntries() != 0){ // Defense
       if(obj->IsA()->InheritsFrom("TH1")){
@@ -87,21 +100,21 @@ void RunAll(TString filename, TString logOpt, TString autonorma, TString type, T
 }
 
 //
-// Castor Phi Plots
+// C A S T O R   G E O M E T R Y   P L O T S
 //
 
 void SectorPhi(TString name1){
 
   TCanvas *c1 = new TCanvas(name1,name1);
-  c1->cd();   
+  c1->cd();
 
   gStyle->SetOptStat(0);
 
   TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
   TString legdata, legmc;
 
-  TFile *l1  = TFile::Open("histo_Muon_Reco.root");
-  TFile *l2  = TFile::Open("histo_DyToMuMu_Reco.root");
+  TFile *l1 = TFile::Open("histo_Muon_Reco.root");
+  TFile *l2 = TFile::Open("histo_DyToMuMu_Reco.root");
   legdata = "2010 data";
   legmc = "MC";
 
@@ -135,7 +148,7 @@ void SectorPhi(TString name1){
 }
 
 //
-// Castor: Each sector energy distribution. Each sector energy Vs Total Castor Multiplicity Plots
+// C A S T O R    P L O T S   O F   E N E R G Y   A N D   M U L T I P L I C I T Y
 //
 
 void MakeMultipleSingle(TString type){
@@ -178,12 +191,11 @@ void MakeMultipleSingle(TString type){
   TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
 
   if (type == "muon" || type == "Muon" || type == "MUON"){
-    //TFile *l1  = TFile::Open("histo_Castor_muon.root");
-    TFile *l1  = TFile::Open("histo_DyToMuMu_RECO.root");
-    TFile *l1mc  = TFile::Open("histo_DyToMuMu_RECO.root");
+    TFile *l1 = TFile::Open("histo_Castor_muon.root");
+    TFile *l1mc = TFile::Open("histo_DyToMuMu_RECO.root");
   }
   else if (type == "electron" || type == "Electron" || type == "ELECTRON"){
-    TFile *l1  = TFile::Open("histo_Castor_electron.root");
+    TFile *l1 = TFile::Open("histo_Castor_electron.root");
   }
   else {
     std::cout << "Please, put correct option." << std::endl;
@@ -194,23 +206,19 @@ void MakeMultipleSingle(TString type){
     char name[300];
     sprintf(name,"TotalEnergySector%d_step7",i);
     TH1F* h_1 = (TH1F*)l1->Get(name);
-    //TH1F* h_2 = h_1->Clone();
-    TH1F* h_3 = (TH1F*)l1mc->Get(name);
-    //h_2->Reset();
-    //h_2->SetMaximum(1.);
+    TH1F* h_2 = (TH1F*)l1mc->Get(name);
     c1->cd(i);
+
     //gPad->SetLogx(1);
     gPad->SetLogy(1);
-    //h_2->Draw();
-    //h_1->SetMarkerStyle(8);
-    //h_1->SetMarkerSize(1.1);
-    h_3->SetLineColor(kRed);
-    h_3->SetLineWidth(1.1);
+
+    h_2->SetLineColor(kRed);
+    h_2->SetLineWidth(1.1);
     h_1->GetYaxis()->SetTitleOffset(1.4);
     h_1->GetXaxis()->SetRangeUser(0.,10.);
-    h_3->GetXaxis()->SetRangeUser(0.,10.);
+    h_2->GetXaxis()->SetRangeUser(0.,10.);
     h_1->DrawNormalized("histo");
-    h_3->DrawNormalized("histosame");
+    h_2->DrawNormalized("histosame");
     h_1->SetMaximum(1.);
   }
 
@@ -324,9 +332,7 @@ void MakeMultipleSingle(TString type){
   h_1k->GetYaxis()->SetTitleOffset(1.4);
   h_1k->Draw("colz");
 
-
-  //TFile *ld  = TFile::Open("histo_Castor_muonp2.root");
-  TFile *ld  = TFile::Open("histo_DyToMuMu_RECO.root");
+  TFile *ld = TFile::Open("histo_DyToMuMu_RECO.root");
   int display1;
   for (int i=1; i< 6; i++){
     for (int j=1; j< 6;j++){
@@ -361,8 +367,9 @@ void MakeMultipleSingle(TString type){
 
 }
 
+
 //
-// Castor: sector thresholds. Thresholds Measurements.
+// T H R E S H O L D S   B Y   S E C T O R 
 //
 // Output: file with each sector threshold.
 
@@ -375,7 +382,7 @@ void ThresholdsStudiesSectors(TString openfile, TString complement, bool printPa
   TCanvas *c2 = new TCanvas("thresholds","thresholds",500,500);
   TCanvas *c3 = new TCanvas("sigma","sigma",500,500);
 
-  TFile *l1  = TFile::Open(openfile);
+  TFile *l1 = TFile::Open(openfile);
 
   TString outtxt = openfile;
   outtxt.ReplaceAll("root","txt");
@@ -391,7 +398,7 @@ void ThresholdsStudiesSectors(TString openfile, TString complement, bool printPa
     char name[300];
     char text[300];
     char textth[300];
-    char textthf[300];     
+    char textthf[300];
 
     sprintf(name,"Sector%d_CastorSumEnergy_with_type_",i);
     TString finalname = name + complement;
@@ -477,7 +484,7 @@ void ThresholdsStudiesSectors(TString openfile, TString complement, bool printPa
 }
 
 //
-// Castor: channels thresholds. Thresholds Measurements.
+// T H R E S H O L D S   B Y   C H A N N E L 
 //
 // Output: file with each channel threshold.
 
@@ -503,7 +510,7 @@ void ThresholdsStudiesChannels(TString openfile, TString complement, bool printP
   TCanvas *c6 = new TCanvas("thresholds","thresholds",500,500);
   TCanvas *c7 = new TCanvas("sigma","sigma",500,500);
 
-  TFile *l1  = TFile::Open(openfile);
+  TFile *l1 = TFile::Open(openfile);
 
   TString outtxt = openfile;
   outtxt.ReplaceAll("root","txt");
@@ -609,17 +616,16 @@ void ThresholdsStudiesChannels(TString openfile, TString complement, bool printP
 }
 
 //
-// Compare Signal and Noise, same Run Range
+// C O M P A R E   S I G N A L   A N D   N O I S E,   S A M E   R U N   R A N G E 
 //
 
 void CompareSignalAndNoise(TString name,bool logscale, bool swtmsg){
 
   gStyle->SetOptStat(0);
 
-  // Data
-  TFile *l1  = TFile::Open("histo_Castor_threshold_p1_collisions.root");
-  TFile *l2  = TFile::Open("histo_Castor_threshold_p1_unpaired.root");
-  TFile *l3  = TFile::Open("histo_Castor_threshold_p1_nocollisions.root");
+  TFile *l1 = TFile::Open("histo_Castor_threshold_p1_collisions.root");
+  TFile *l2 = TFile::Open("histo_Castor_threshold_p1_unpaired.root");
+  TFile *l3 = TFile::Open("histo_Castor_threshold_p1_nocollisions.root");
 
   TCanvas* c1 = new TCanvas(name,name);
   c1->cd()->SetRightMargin(0.04);
@@ -729,17 +735,16 @@ void CompareSignalAndNoise(TString name,bool logscale, bool swtmsg){
 }
 
 //
-// Draw Castor Noise with Different Run Ranges
+// D R A W   C A S T O R   N O I S E   W I T H   D I F F E R E N T   R U N   R A N G E S
 //
 
 void NoiseDifferentPeriods(TString name,bool logscale){
 
   gStyle->SetOptStat(0);
 
-  // Data
-  TFile *l1  = TFile::Open("histo_Castor_threshold_p1_unpaired.root");
-  TFile *l2  = TFile::Open("histo_Castor_threshold_p2_unpaired.root");
-  TFile *l3  = TFile::Open("histo_Castor_threshold_p3_unpaired.root");
+  TFile *l1 = TFile::Open("histo_Castor_threshold_p1_unpaired.root");
+  TFile *l2 = TFile::Open("histo_Castor_threshold_p2_unpaired.root");
+  TFile *l3 = TFile::Open("histo_Castor_threshold_p3_unpaired.root");
 
   TCanvas* c1 = new TCanvas(name,name);
   c1->cd()->SetRightMargin(0.04);
@@ -838,9 +843,11 @@ void NoiseDifferentPeriods(TString name,bool logscale){
 
 }
 
+
 //
-// Make Correction Evolution Plots
+// M A K E   E V O L U T I O N   P L O T S
 //
+
 void CalculateCorrectorFlow(){
 
   TCanvas *c1 = new TCanvas("module1","module1",1200,1200);
@@ -864,19 +871,13 @@ void CalculateCorrectorFlow(){
   gStyle->SetOptStat(0);
   gStyle->SetPalette(1);
 
-  TFile *l1  = TFile::Open("ratio_step1.root");
-  TFile *l2  = TFile::Open("ratio_step2.root");
-  TFile *l3  = TFile::Open("ratio_step3.root");
-  TFile *l4  = TFile::Open("ratio_step4.root");
-  TFile *l5  = TFile::Open("ratio_step5.root");
-  TFile *l6  = TFile::Open("ratio_step6.root");
+  TFile *l1 = TFile::Open("ratio_step1.root");
+  TFile *l2 = TFile::Open("ratio_step2.root");
+  TFile *l3 = TFile::Open("ratio_step3.root");
 
   TH2F* h_1 = (TH2F*)l1->Get("channelcorrector");
   TH2F* h_2 = (TH2F*)l2->Get("channelcorrector");
   TH2F* h_3 = (TH2F*)l3->Get("channelcorrector");
-  TH2F* h_4 = (TH2F*)l4->Get("channelcorrector");
-  TH2F* h_5 = (TH2F*)l5->Get("channelcorrector");
-  TH2F* h_6 = (TH2F*)l6->Get("channelcorrector");
 
   for(int j=1;j<6;j++){
     for (int i=1;i<17;i++){
@@ -884,7 +885,6 @@ void CalculateCorrectorFlow(){
       char name[300];
       char title[300];
       char textfit[300];
-      double acorr = 0;
 
       if(j==1){
 	sprintf(name,"Channel%d",i);
@@ -916,48 +916,40 @@ void CalculateCorrectorFlow(){
 	c5->cd(i);
       }
 
-      TH1F* h=new TH1F(name,title, 6, 0, 300);
+      double binrange[4]={0.,50,100.,300.};
+      TH1F* h=new TH1F(name,title, 3, binrange);
       h->SetBinContent(1,h_1->GetBinContent(j,i));
       h->SetBinContent(2,h_2->GetBinContent(j,i));
       h->SetBinContent(3,h_3->GetBinContent(j,i));
-      h->SetBinContent(4,h_4->GetBinContent(j,i));
-      h->SetBinContent(5,h_5->GetBinContent(j,i));
-      h->SetBinContent(6,h_6->GetBinContent(j,i));
-      acorr = (h_1->GetBinContent(j,i) + h_2->GetBinContent(j,i) + h_3->GetBinContent(j,i) + h_4->GetBinContent(j,i) + h_5->GetBinContent(j,i) + h_6->GetBinContent(j,i))/6.; 
-      /*      h->SetBinError(1,h_1->GetBinError(j,i));
-	      h->SetBinError(2,h_2->GetBinError(j,i));
-	      h->SetBinError(3,h_3->GetBinError(j,i));
-	      h->SetBinError(4,h_4->GetBinError(j,i));
-	      h->SetBinError(5,h_5->GetBinError(j,i));
-	      h->SetBinError(6,h_6->GetBinError(j,i));*/
+      h->SetBinError(1,h_1->GetBinError(j,i));
+      h->SetBinError(2,h_2->GetBinError(j,i));
+      h->SetBinError(3,h_3->GetBinError(j,i));
       h->GetYaxis()->SetRangeUser(0.,3.);
       h->SetMarkerSize(1);
       h->SetMarkerStyle(20);
       h->Draw("P");
-      //h->Fit("pol0");
-
-      sprintf(textfit,"%g",acorr);
-      TLatex *hfit = new TLatex(0.7,160,textfit);
-      hfit->SetTextSize(0.1);
-      hfit->SetTextFont(72);
-      hfit->SetTextColor(kBlack);
-      hfit->DrawLatex(175,2.5,textfit);
-
-      TLine *line = new TLine(0,acorr,300,acorr);
-      line->SetLineColor(8);
-      line->SetLineWidth(3);
-      line->Draw();
-
+      if (h->GetSumOfWeights()>0){
+	h->Fit("pol0");
+	sprintf(textfit,"%.2f #pm %.2f",h->GetFunction("pol0")->GetParameter(0),h->GetFunction("pol0")->GetParError(0));
+	TLatex *hfit = new TLatex(0.2,160,textfit);
+	hfit->SetTextSize(0.1);
+	hfit->SetTextFont(72);
+	hfit->SetTextColor(kBlack);
+	hfit->DrawLatex(140,2.5,textfit);
+      }
     }
-  }
 
+  }
 }
 
 
 //
-// Histograms: create correction mapping
+// H I S T O G R A M S:  C R E A T E   C O R R E C T I O N   M A P P I N G 
 //
+
 void CalculateCorrector(TString name,TString output){
+
+  bool unc_per = true;
 
   TCanvas *c1 = new TCanvas("factors","factors",1400,400);
   c1->Divide(3,1);
@@ -968,11 +960,14 @@ void CalculateCorrector(TString name,TString output){
   gStyle->SetOptStat(0);
   gStyle->SetPalette(1);
 
-  TFile *l1  = TFile::Open("histo_Castor_muon.root");
-  TFile *l2  = TFile::Open("histo_DyToMuMu_RECO_nocor.root");
+  TFile *l1 = TFile::Open("histo_Castor_muon.root");
+  TFile *l2 = TFile::Open("histo_DyToMuMu_RECO_nocor.root");
 
   TH2F* h_1 = (TH2F*)l1->Get(name);
   TH2F* h_2 = (TH2F*)l2->Get(name);
+
+  TH2F *h_1new = h_1->Clone();
+  TH2F *h_2new = h_2->Clone();
 
   int nBinsX = h_1->GetXaxis()->GetNbins();
   int nBinsY = h_2->GetYaxis()->GetNbins();
@@ -991,41 +986,59 @@ void CalculateCorrector(TString name,TString output){
   double factor5m = h_2->Integral(5,5,0,nBinsY);
 
   for(int i=1;i<=nBinsY; i++){
-    h_1->SetBinContent(1,i,h_1->GetBinContent(1,i)/factor1d);
-    h_1->SetBinContent(2,i,h_1->GetBinContent(2,i)/factor2d);
-    h_1->SetBinContent(3,i,h_1->GetBinContent(3,i)/factor3d);
-    h_1->SetBinContent(4,i,h_1->GetBinContent(4,i)/factor4d);
-    h_1->SetBinContent(5,i,h_1->GetBinContent(5,i)/factor5d);
 
-    h_2->SetBinContent(1,i,h_2->GetBinContent(1,i)/factor1m);
-    h_2->SetBinContent(2,i,h_2->GetBinContent(2,i)/factor2m);
-    h_2->SetBinContent(3,i,h_2->GetBinContent(3,i)/factor3m);
-    h_2->SetBinContent(4,i,h_2->GetBinContent(4,i)/factor4m);
-    h_2->SetBinContent(5,i,h_2->GetBinContent(5,i)/factor5m);
+    h_1new->SetBinContent(1,i,h_1->GetBinContent(1,i)/factor1d);
+    h_1new->SetBinContent(2,i,h_1->GetBinContent(2,i)/factor2d);
+    h_1new->SetBinContent(3,i,h_1->GetBinContent(3,i)/factor3d);
+    h_1new->SetBinContent(4,i,h_1->GetBinContent(4,i)/factor4d);
+    h_1new->SetBinContent(5,i,h_1->GetBinContent(5,i)/factor5d);
+
+    h_2new->SetBinContent(1,i,h_2->GetBinContent(1,i)/factor1m);
+    h_2new->SetBinContent(2,i,h_2->GetBinContent(2,i)/factor2m);
+    h_2new->SetBinContent(3,i,h_2->GetBinContent(3,i)/factor3m);
+    h_2new->SetBinContent(4,i,h_2->GetBinContent(4,i)/factor4m);
+    h_2new->SetBinContent(5,i,h_2->GetBinContent(5,i)/factor5m);
+
+    if (unc_per){
+      // Sigma ~20% E
+      h_1new->SetBinError(1,i,0.2*h_1->GetBinContent(1,i)/factor1d);
+      h_1new->SetBinError(2,i,0.2*h_1->GetBinContent(2,i)/factor2d);
+      h_1new->SetBinError(3,i,0.2*h_1->GetBinContent(3,i)/factor3d);
+      h_1new->SetBinError(4,i,0.2*h_1->GetBinContent(4,i)/factor4d);
+      h_1new->SetBinError(5,i,0.2*h_1->GetBinContent(5,i)/factor5d);
+
+      h_2new->SetBinError(1,i,0.2*h_2->GetBinContent(1,i)/factor1m);
+      h_2new->SetBinError(2,i,0.2*h_2->GetBinContent(2,i)/factor2m);
+      h_2new->SetBinError(3,i,0.2*h_2->GetBinContent(3,i)/factor3m);
+      h_2new->SetBinError(4,i,0.2*h_2->GetBinContent(4,i)/factor4m);
+      h_2new->SetBinError(5,i,0.2*h_2->GetBinContent(5,i)/factor5m);
+    }else{
+      // Sigma Distribution = sqrt(E)
+      h_1new->SetBinError(1,i,TMath::Sqrt(h_1->GetBinContent(1,i))/factor1d);
+      h_1new->SetBinError(2,i,TMath::Sqrt(h_1->GetBinContent(2,i))/factor2d);
+      h_1new->SetBinError(3,i,TMath::Sqrt(h_1->GetBinContent(3,i))/factor3d);
+      h_1new->SetBinError(4,i,TMath::Sqrt(h_1->GetBinContent(4,i))/factor4d);
+      h_1new->SetBinError(5,i,TMath::Sqrt(h_1->GetBinContent(5,i))/factor5d);
+
+      h_2new->SetBinError(1,i,TMath::Sqrt(h_2->GetBinContent(1,i))/factor1m);
+      h_2new->SetBinError(2,i,TMath::Sqrt(h_2->GetBinContent(2,i))/factor2m);
+      h_2new->SetBinError(3,i,TMath::Sqrt(h_2->GetBinContent(3,i))/factor3m);
+      h_2new->SetBinError(4,i,TMath::Sqrt(h_2->GetBinContent(4,i))/factor4m);
+      h_2new->SetBinError(5,i,TMath::Sqrt(h_2->GetBinContent(5,i))/factor5m);
+    }
+
   }
 
-  double factor1ds = h_1->Integral(1,1,0,nBinsY);
-  double factor2ds = h_1->Integral(2,2,0,nBinsY);
-  double factor3ds = h_1->Integral(3,3,0,nBinsY);
-  double factor4ds = h_1->Integral(4,4,0,nBinsY);
-  double factor5ds = h_1->Integral(5,5,0,nBinsY);
-
-  double factor1ms = h_2->Integral(1,1,0,nBinsY);
-  double factor2ms = h_2->Integral(2,2,0,nBinsY);
-  double factor3ms = h_2->Integral(3,3,0,nBinsY);
-  double factor4ms = h_2->Integral(4,4,0,nBinsY);
-  double factor5ms = h_2->Integral(5,5,0,nBinsY);
-
-  TH2F* ratio = (TH2F*)h_1->Clone();
+  TH2F* ratio = (TH2F*)h_1new->Clone();
   ratio->SetTitle("Correction Channels Factors");
-  ratio->Divide(h_2);
+  ratio->Divide(h_2new);
 
   c1->cd(1);
-  h_1->SetTitle("Pattern Data Energy, normalized");
-  h_1->Draw();
+  h_1new->SetTitle("Pattern Data Energy, normalized");
+  h_1new->Draw();
   c1->cd(2);
-  h_2->SetTitle("Pattern MC Energy, normalized");
-  h_2->Draw();
+  h_2new->SetTitle("Pattern MC Energy, normalized");
+  h_2new->Draw();
   c1->cd(3);
   ratio->Draw();
 
@@ -1036,7 +1049,7 @@ void CalculateCorrector(TString name,TString output){
 
 
 //
-// Histograms: configure colors
+// R O O T   C O S M I C S
 //
 
 void TH1Draw(TH1F* h_1, TH1F* h_2, TH1F* h_3){
