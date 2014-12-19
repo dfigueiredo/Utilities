@@ -407,6 +407,23 @@ void NEntriesNorma(TH1 *h_1, TH1 *h_2, TH1 *h_3){
   
 }
 
+//Scale Entries
+void NEntriesNorma2D(TH1 *h_1, TH1 *h_2){
+
+  cout << "Normalization by Entries" << endl;
+  double weight1, weight2;
+  double ratio1;
+
+  weight1 = 1./h_1->GetEntries();
+  weight2 = 1./h_2->GetEntries();
+
+  ratio1 = weight2/weight1;
+
+  h_2->Scale(ratio1);
+  return;
+
+}
+
 // scale file1 to have Max=1
 void NH1FMax1(TH1 *file1){
 
