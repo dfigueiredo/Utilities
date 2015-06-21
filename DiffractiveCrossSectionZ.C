@@ -90,7 +90,7 @@ double accep_muon;
 double accep_electron;
 double surv;
 
-void DiffractiveCrossSectionW(){
+void DiffractiveCrossSectionZ(){
 
   // Files
   datafile_z_muon = "histo_Z_muon_reco.root";
@@ -186,11 +186,12 @@ void DiffractiveCrossSectionW(){
   //MyOfficialCMS("Diffraction/etasignedHF_single_step7");
   //MyOfficialCMS("Diffraction/etasignedCASTOR_single_step7");
   //MyOfficialCMS("Diffraction/xiMinus_single_step7");
+  MyOfficialCMS("Diffraction/xiMinusAll_single_step7");
   //MyOfficialCMS("Diffraction/xiPlus_single_step7");
   //MyOfficialCMS("Diffraction/SumPTMingap_single_step7");
   //MyOfficialCMS("Diffraction/SumPTMaxgap_single_step7");
   //MyOfficialCMS("Diffraction/maxetagap_single_NGapCASTOR");
-  MyOfficialCMS("Diffraction/etamin_single_NGapCASTOR");
+  //MyOfficialCMS("Diffraction/etamin_single_NGapCASTOR");
   //MyOfficialCMS("Diffraction/etamax_single_NGapCASTOR");
   //MyOfficialCMS("Diffraction/mHF_single_step7");
 
@@ -492,15 +493,18 @@ void MyOfficialCMS(TString hname_w){
   pad2->SetFrameBorderMode(0);
   pad2->SetFrameBorderMode(0);
 
-  TH1F* h4=new TH1F(*data);
+  //TH1F* h4=new TH1F(*data);
+  TH1F *h4=(TH1F*)data->Clone();
   h4->Divide(bkg);
   h4->SetStats(0);
 
-  TH1F* h5=new TH1F(*data);
+  //TH1F* h5=new TH1F(*data);
+  TH1F *h5=(TH1F*)data->Clone();
   h5->Divide(signal);
   h5->SetStats(0);
 
-  TH1F* h6=new TH1F(*data);
+  //TH1F* h6=new TH1F(*data);
+  TH1F *h6=(TH1F*)data->Clone();
   h6->Divide(allmc);
   h6->SetStats(0);
 
