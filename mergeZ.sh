@@ -1,0 +1,3 @@
+hadd histo_Z_muon_reco.root histo_muon2010B_p*root
+hadd histo_Z_bkg_muon_reco.root histo_ZtoMuMu_Reco_pu_P*root
+hadd histo_Z_signal_muon_reco.root histo_PomwigMinus_muon_Reco_P*root
