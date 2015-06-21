@@ -80,7 +80,7 @@ int rebin;
 void DiffractiveResolution(){
 
   // Files
-  mc_file_muon = "histo_PomwigMinus_muonP2_Reco.root";
+  mc_file_muon = "histo_all_signal.root";
   //mc_file_muon = "histo_WtoMuNu_Reco_pu_P2.root";
   //mc_file_electron = "histo_PomwigMinus_electron_Reco_P2.root";
 
@@ -107,10 +107,10 @@ void DiffractiveResolution(){
   // Rebin. If rebin <= 0, no changes.
   rebin = 0;
 
-  //MyResolution("Diffraction/xiPlus_single_without_cuts","Generator/genXiPlus_single_without_cuts");
-  //MyResolution("Diffraction/xiPlus_single_NGapCASTOR","Generator/genXiPlus_single_NGapCASTOR");
-  //MyResolution("Diffraction/xiMinus_single_without_cuts","Generator/genXiMinus_single_without_cuts");
-  MyResolution("Diffraction/xiMinus_single_NGapCASTOR","Generator/genXiMinus_single_NGapCASTOR");
+  //MyResolution("Diffraction/xiMinus_single_zeropileup","Generator/genXiMinus_single_zeropileup");
+  //MyResolution("Diffraction/xiMinus_single_NGapCASTOR","Generator/genXiMinus_single_NGapCASTOR");
+  //MyResolution("Diffraction/xiMinusAll_single_zeropileup","Generator/genXiMinusAll_single_zeropileup");
+  MyResolution("Diffraction/xiMinusAll_single_NGapCASTOR","Generator/genXiMinusAll_single_NGapCASTOR");
 
 
 }
@@ -253,10 +253,6 @@ void MyResolution(TString hname1, TString hname2){
   c->cd();
   pad1->cd();
 
-  gen->Draw("hist");
-  reco->Draw("histsame");
-  leg->Draw();
-
   TLatex *   tex = new TLatex(0.94,0.9346049,correction);
   tex->SetNDC();
   tex->SetTextAlign(31);
@@ -272,6 +268,10 @@ void MyResolution(TString hname1, TString hname2){
   tex->SetTextSize(0.05);
   tex->SetLineWidth(2);
   tex->Draw();
+
+  gen->Draw("hist");
+  reco->Draw("histsame");
+  leg->Draw();
 
   pad1->Modified();
   c->cd();

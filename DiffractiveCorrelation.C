@@ -80,7 +80,7 @@ int rebin;
 void DiffractiveCorrelation(){
 
   // Files
-  mc_file_muon = "histo_PomwigMinus_muonP2_Reco.root";
+  mc_file_muon = "histo_all_signal.root";
   //mc_file_muon = "histo_WtoMuNu_Reco_pu_P2.root";
   //mc_file_electron = "histo_PomwigMinus_electron_Reco_P2.root";
 
@@ -103,7 +103,12 @@ void DiffractiveCorrelation(){
   // Rebin. If rebin <= 0, no changes.
   rebin = 2;
 
-  MyCorrelation("Generator/correlXiMinus_single_NGapCASTOR","Generator/correlXiMinus_single_NGapCASTOR");
+  //MyCorrelation("Generator/correlXiMinus_single_zeropileup","Generator/correlXiMinus_single_zeropileup");
+  //MyCorrelation("Generator/correlXiMinus_single_NGapCASTOR","Generator/correlXiMinus_single_NGapCASTOR");
+  //MyCorrelation("Generator/correlXiMinusCastor_single_zeropileup","Generator/correlXiMinusCastor_single_zeropileup");
+  //MyCorrelation("Generator/correlXiMinusCastor_single_NGapCASTOR","Generator/correlXiMinusCastor_single_NGapCASTOR");
+  //MyCorrelation("Generator/correlXiMinusAll_single_zeropileup","Generator/correlXiMinusAll_single_zeropileup");
+  MyCorrelation("Generator/correlXiMinusAll_single_NGapCASTOR","Generator/correlXiMinusAll_single_NGapCASTOR");
 
 
 }

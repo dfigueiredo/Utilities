@@ -80,7 +80,7 @@ int rebin;
 void DiffractiveFitConstant(){
 
   // Files
-  mc_file = "histo_PomwigMinus_muonP2_Reco.root";
+  mc_file = "histo_all_signal.root";
   //mc_file = "histo_WtoMuNu_Reco_pu_P2.root";
   //mc_file_electron = "histo_PomwigMinus_electron_Reco_P2.root";
 
@@ -105,10 +105,10 @@ void DiffractiveFitConstant(){
   // Rebin. If rebin <= 0, no changes.
   rebin = 0;
   
-  //MyResolution("Generator/resAbsXiMinus_single_zeropileup");
-  MyResolution("Generator/resAbsXiMinus_single_without_cuts");
-  
-
+  //MyResolution("Generator/ratioXiMinus_single_zeropileup");
+  //MyResolution("Generator/ratioXiMinus_single_NGapCASTOR");
+  MyResolution("Generator/ratioXiMinusMore_single_zeropileup");
+    
 }
 
 // C M S   O F F I C I A L   S T Y L E
@@ -116,8 +116,8 @@ void DiffractiveFitConstant(){
 
 void loadFiles(TString hname1){
 
-  gStyle->SetOptFit(0);
-  gStyle->SetOptStat(0);
+  //gStyle->SetOptFit(0);
+  gStyle->SetOptStat(111);
   gStyle->SetOptTitle(0);
 
   TFile *l_file  = TFile::Open(mc_file.c_str());
@@ -157,7 +157,7 @@ void MyResolution(TString hname1){
   c->Draw();
 
   res->SetDirectory(0);
-  res->SetStats(0);
+  //res->SetStats(0);
 
   TLegend* leg = new TLegend(0.7597956,0.822335,0.9931857,0.9949239,NULL,"brNDC");
 
